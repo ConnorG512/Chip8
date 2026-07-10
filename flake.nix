@@ -73,7 +73,7 @@
         relWithDebInfo = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "relWithDebInfo"; };
       };
 
-      devShells.x86_64-linux.default = pkgs.mkShell {
+      devShells.x86_64-linux.default = pkgs.mkShell.override { stdenv = pkgs.gcc16Stdenv; } {
         packages = with pkgs; [ gef strace ];
         inputsFrom = [ self.packages.x86_64-linux.debug ];
 
