@@ -18,14 +18,15 @@ elseif(NOT CLANG_TIDY_EXEC)
   message(STATUS "Clang tidy could not be found! Cannot run analysis.")
 endif()
 
+find_package(SDL3 REQUIRED)
+
 add_executable(chip-8 
   src/main.cpp
   src/timer.cpp
 )
 
-# Link Libraries:
 target_link_libraries(chip-8 PRIVATE
-  # Libraries:
+  SDL3::SDL3
 )
 
 # Add Warning flags:

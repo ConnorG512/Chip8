@@ -12,6 +12,7 @@
       build =
         { lib
         , stdenv
+        , callPackage
         , clang-tools
         , cmake
         , ninja
@@ -21,20 +22,7 @@
         }:
         stdenv.mkDerivation (finalAttrs:
         let
-          cmakeBuildProfiles = {
-            debug = {
-              flag = "Debug";
-              symbols = true;
-            };
-            release = {
-              flag = "Release";
-              symbols = false;
-            };
-            relWithDebInfo = {
-              flag = "RelWithDebInfo";
-              symbols = true;
-            };
-          };
+          cmakeBuildProfiles = import ./nix/cmake-profiles.nix;
         in
         {
           name = "${finalAttrs.pname}-${finalAttrs.version}-${finalAttrs.system}";
@@ -51,7 +39,9 @@
             ninja
           ];
 
-          buildInputs = [ ];
+          buildInputs = [
+            (callPackage ./nix/sdl3-build.nix { inherit releaseMode; })
+          ];
           cmakeFlags = [
             "-DCMAKE_BUILD_TYPE=${cmakeBuildProfiles.${releaseMode}.flag}"
             (lib.cmakeBool "ENABLE_SANITIZE" enableSanitizers)
