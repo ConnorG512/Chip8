@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
+# Options: 
+option(ENABLE_SANITIZE "Enable sanitize tooling." OFF)
+option(ENABLE_GGDB "Enable ggdb." OFF)
+
 find_program(CLANG_TIDY_EXEC "clang-tidy")
 if(CLANG_TIDY_EXEC)
   message(STATUS "Clang Tidy found... Path: ${CLANG_TIDY_EXEC}")
@@ -19,10 +23,23 @@ add_executable(chip-8
   src/timer.cpp
 )
 
+# Link Libraries:
 target_link_libraries(chip-8 PRIVATE
   # Libraries:
 )
 
+if(ENABLE_GGDB)
+  message(STATUS "Enabling -ggdb")
+  target_compile_options(chip-8 PRIVATE "-ggdb")
+endif()
+
+if(ENABLE_SANITIZE)
+  message(STATUS "Enabling sanitizers...")
+  target_compile_options(chip-8 PRIVATE "-fsanitize=address,undefined")
+  target_link_options(chip-8 PRIVATE -fsanitize=address,undefined)
+endif()
+
+# Include Directories:
 target_include_directories(chip-8 PRIVATE
   # Include directories:
   "${CMAKE_CURRENT_SOURCE_DIR}/include"

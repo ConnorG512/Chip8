@@ -16,6 +16,8 @@
         , cmake
         , ninja
         , releaseMode
+        , enableSanitizers ? false
+        , enableGgdb ? false
         }:
         stdenv.mkDerivation (finalAttrs:
         let
@@ -52,6 +54,8 @@
           buildInputs = [ ];
           cmakeFlags = [
             "-DCMAKE_BUILD_TYPE=${cmakeBuildProfiles.${releaseMode}.flag}"
+            (lib.cmakeBool "ENABLE_SANITIZE" enableSanitizers)
+            (lib.cmakeBool "ENABLE_GGDB" enableGgdb)
           ];
         });
     in
@@ -59,7 +63,12 @@
       formatter.x86_64-linux = pkgs.nixpkgs-fmt;
 
       packages.x86_64-linux = {
-        debug = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "debug"; };
+        debug = pkgs.callPackage build {
+          stdenv = pkgs.gcc16Stdenv;
+          releaseMode = "debug";
+          enableGgdb = true;
+          enableSanitizers = true;
+        };
         release = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "release"; };
         relWithDebInfo = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "relWithDebInfo"; };
       };
@@ -67,8 +76,8 @@
       devShells.x86_64-linux.default = pkgs.mkShell {
         packages = with pkgs; [ gef strace ];
         inputsFrom = [ self.packages.x86_64-linux.debug ];
-        
-        CMAKE_EXPORT_COMPILE_COMMANDS="ON";
+
+        CMAKE_EXPORT_COMPILE_COMMANDS = "ON";
 
         shellHook = ''
           echo "Entering chip-8 shell!"
