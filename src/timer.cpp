@@ -2,21 +2,21 @@
 
 #include <cassert>
 
-Chip8::Timer::Timer(const std::int8_t current) noexcept
-  : current_ {current} {
-    assert(current < max_);
-    assert(current >= 0);
-  }
+Chip8::Timer::Timer(const std::int8_t current) noexcept : current_{current}
+{
+  assert(current < max_);
+  assert(current >= 0);
+}
 
-std::int8_t Chip8::Timer::reset_timer() noexcept
+auto Chip8::Timer::reset_timer() noexcept -> std::int8_t
 {
   current_ = max_;
   return current_;
 }
 
-std::int8_t Chip8::Timer::get_current() const noexcept { return current_; }
+auto Chip8::Timer::get_current() const noexcept -> std::int8_t { return current_; }
 
-std::int8_t Chip8::Timer::set_current(const std::int8_t val) noexcept
+auto Chip8::Timer::set_current(const std::int8_t val) noexcept -> std::int8_t
 {
   assert(val < max_);
   assert(val >= 0);
@@ -25,7 +25,7 @@ std::int8_t Chip8::Timer::set_current(const std::int8_t val) noexcept
   return current_;
 }
 
-Chip8::Timer::State Chip8::Timer::dec() noexcept
+auto Chip8::Timer::dec() noexcept -> Chip8::Timer::State
 {
   /*
     Timer will decrement and stay at 0 if hit.
@@ -37,6 +37,6 @@ Chip8::Timer::State Chip8::Timer::dec() noexcept
     current_ = 0;
     return State::Zero;
   }
-  else
-    return State::Non_Zero;
+
+  return State::Non_Zero;
 }

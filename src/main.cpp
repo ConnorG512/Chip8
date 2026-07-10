@@ -1,5 +1,5 @@
 #include <cstdlib>
 
-int main() {
+auto main() -> int {
   return EXIT_SUCCESS;
 }
