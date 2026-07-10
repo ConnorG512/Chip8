@@ -1,6 +1,8 @@
 #include "register.hpp"
 
 #include <cstdlib>
+#include <exception>
+#include <print>
 
 auto main() -> int
 {
@@ -22,6 +24,20 @@ auto main() -> int
   Chip8::Register<std::uint8_t> RegF{};
   Chip8::Register<std::uint16_t> RegI{};
   Chip8::Register<std::uint16_t> RegPC{};
+
+  try
+  {
+  }
+  catch (std::exception &e)
+  {
+    std::println("Exception Caught! Error: {}.", e.what());
+    return EXIT_FAILURE;
+  }
+  catch (...)
+  {
+    std::println("Unknown Exception Caught!");
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }
