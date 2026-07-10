@@ -28,6 +28,9 @@ target_link_libraries(chip-8 PRIVATE
   # Libraries:
 )
 
+# Add Warning flags:
+target_compile_options(chip-8 PRIVATE -Wall -Wextra -Wpedantic)
+
 if(ENABLE_GGDB)
   message(STATUS "Enabling -ggdb")
   target_compile_options(chip-8 PRIVATE "-ggdb")
