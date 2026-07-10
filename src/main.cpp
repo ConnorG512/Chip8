@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include <exception>
-#include <print>
+#include <iostream>
 
 auto main() -> int
 {
@@ -30,12 +30,12 @@ auto main() -> int
   }
   catch (std::exception &e)
   {
-    std::println("Exception Caught! Error: {}.", e.what());
+    std::cerr << "Exception Caught! Error: " << e.what() << '\n';
     return EXIT_FAILURE;
   }
   catch (...)
   {
-    std::println("Unknown Exception Caught!");
+    std::cerr << "Unknown Exception Caught!" << '\n';
     return EXIT_FAILURE;
   }
 
