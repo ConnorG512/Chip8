@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(chip-8 
   src/main.cpp
+  src/timer.cpp
 )
 
 target_link_libraries(chip-8 PRIVATE
