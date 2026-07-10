@@ -13,7 +13,16 @@ concept RegisterType = std::is_same_v<T, std::uint8_t> || std::is_same_v<T, std:
 template <RegisterType T> class Register
 {
 public:
-  auto assign_val(T val) noexcept -> void { held_value_ = val; }
+  auto assign_val(T val) noexcept -> void
+  {
+    if constexpr (std::is_same_v<T, std::uint16_t>)
+    {
+      static constexpr auto max_address_value{0xFFF};
+      assert(val <= max_address_value);
+    }
+    
+    held_value_ = val;
+  }
   [[nodiscard]] auto get_data() const noexcept -> T { return held_value_; }
   auto reset() noexcept -> void { held_value_ = 0; };
 
