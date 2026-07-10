@@ -17,7 +17,17 @@ public:
     std::int16_t index{};
     std::int8_t value{};
   };
-  auto store_value_in_buffer(MemoryStore store) -> void;
+
+  struct AddressOffsets
+  {
+    std::int16_t start{0};
+    std::int16_t end{0};
+  };
+  static constexpr AddressOffsets system_reserved = {.start = 0x000, .end = 0x1FF};
+  static constexpr AddressOffsets characters = {.start = 0x050, .end = 0x0A0};
+  static constexpr AddressOffsets application = {.start = 0x200, .end = 0xFFF};
+
+  auto store_value_in_buffer(AddressOffsets offset, MemoryStore store) -> void;
 
 private:
   static constexpr auto max_memory_buffer_size{4096};

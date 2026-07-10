@@ -8,7 +8,10 @@
   return static_cast<std::uint8_t>(buf_.at(index));
 }
 
-auto Chip8::MemBuf::store_value_in_buffer(MemoryStore store) -> void
+auto Chip8::MemBuf::store_value_in_buffer(AddressOffsets offset, MemoryStore store) -> void
 {
+  assert(store.index >= offset.start);
+  assert(store.index <= offset.end);
+
   buf_.at(store.index) = static_cast<std::byte>(store.value);
 }
