@@ -4,7 +4,7 @@
 
 Chip8::Timer::Timer(const std::int8_t current) noexcept : current_{current}
 {
-  assert(current < max_);
+  assert(current <= max_);
   assert(current >= 0);
 }
 
