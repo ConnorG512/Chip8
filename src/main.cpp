@@ -21,6 +21,7 @@ auto main() -> int
   Chip8::Register<std::uint8_t> RegE{};
   Chip8::Register<std::uint8_t> RegF{};
   Chip8::Register<std::uint16_t> RegI{};
+  Chip8::Register<std::uint16_t> RegPC{};
 
   return EXIT_SUCCESS;
 }
