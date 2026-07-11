@@ -1,4 +1,4 @@
-{ lib 
+{ lib
 , stdenv
 , fetchFromGitHub
 , cmake
@@ -12,16 +12,18 @@
 , libxkbcommon
 , system
 , releaseMode
-}: 
+}:
 
-stdenv.mkDerivation (finalAttrs: let
+stdenv.mkDerivation (finalAttrs:
+let
   cmakeBuildProfiles = import ./cmake-profiles.nix;
-in {
+in
+{
   name = "${finalAttrs.pname}-${finalAttrs.version}-${finalAttrs.system}";
   pname = "sdl3";
   version = "3.4.12";
   inherit system;
-  
+
   src = fetchFromGitHub {
     owner = "libsdl-org";
     repo = "SDL";
@@ -32,13 +34,13 @@ in {
 
   dontStrip = cmakeBuildProfiles.${releaseMode}.symbols;
 
-  nativeBuildInputs = [ 
-    cmake 
-    ninja 
+  nativeBuildInputs = [
+    cmake
+    ninja
     pkg-config
     wayland-scanner
   ];
-  
+
   buildInputs = [
     wayland
     wayland-protocols
@@ -52,7 +54,7 @@ in {
     (lib.cmakeBool "SDL_SHARED" false)
     (lib.cmakeBool "SDL_STATIC" true)
     (lib.cmakeBool "SDL_TESTS" false)
-    
+
     # X11 Flags:
     (lib.cmakeBool "SDL_X11" false)
     (lib.cmakeBool "SDL_X11_SHARED" false)
