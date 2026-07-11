@@ -63,14 +63,21 @@
         relWithDebInfo = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "relWithDebInfo"; };
       };
 
-      devShells.x86_64-linux.default = pkgs.mkShell.override { stdenv = pkgs.gcc16Stdenv; } {
+      devShells.x86_64-linux.default = let
+        runtimeLibs = with pkgs; [
+          wayland
+          libxkbcommon
+          libGL
+        ];
+      in pkgs.mkShell.override { stdenv = pkgs.gcc16Stdenv; } {
         packages = with pkgs; [ gef strace ];
         inputsFrom = [ self.packages.x86_64-linux.debug ];
 
         CMAKE_EXPORT_COMPILE_COMMANDS = "ON";
-
+        
         shellHook = ''
           echo "Entering chip-8 shell!"
+          export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath runtimeLibs}:/run/opengl-driver/lib:/run/opengl-driver-32/lib:$LD_LIBRARY_PATH"
         '';
       };
     };
