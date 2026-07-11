@@ -23,6 +23,9 @@ find_package(SDL3 REQUIRED)
 add_executable(chip-8 
   src/main.cpp
   src/timer.cpp
+  src/memory-buffer.cpp
+  src/app-window.cpp
+  src/app-renderer.cpp
 )
 
 target_link_libraries(chip-8 PRIVATE
