@@ -1,5 +1,6 @@
 #include "app-renderer.hpp"
 #include "app-window.hpp"
+#include "lua-instance.hpp"
 #include "register.hpp"
 
 #include <SDL3/SDL_events.h>
@@ -34,7 +35,10 @@ auto main() -> int
   // Chip8::Register<std::uint16_t> RegI{};
   // Chip8::Register<std::uint16_t> RegPC{};
 
-  static constexpr std::pair<std::int32_t, std::int32_t> window_xy{1280, 720};
+  Chip8::LuaInstance lua_instance{};
+
+  std::pair<std::int32_t, std::int32_t> window_xy{64 * lua_instance.read_config("window_scale"),
+                                                  32 * lua_instance.read_config("window_scale")};
   Chip8::AppWindow window{"Chip8", window_xy};
   Chip8::AppRenderer renderer{window.window_ref()};
 

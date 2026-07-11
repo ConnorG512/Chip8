@@ -18,18 +18,25 @@ elseif(NOT CLANG_TIDY_EXEC)
   message(STATUS "Clang tidy could not be found! Cannot run analysis.")
 endif()
 
-find_package(SDL3 REQUIRED)
-
 add_executable(chip-8 
-  src/main.cpp
-  src/timer.cpp
-  src/memory-buffer.cpp
-  src/app-window.cpp
   src/app-renderer.cpp
+  src/app-window.cpp
+  src/lua-instance.cpp
+  src/main.cpp
+  src/memory-buffer.cpp
+  src/timer.cpp
+)
+
+find_package(SDL3 REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(LUA REQUIRED IMPORTED_TARGET
+  lua
 )
 
 target_link_libraries(chip-8 PRIVATE
   SDL3::SDL3
+  PkgConfig::LUA
 )
 
 # Add Warning flags:
@@ -51,5 +58,12 @@ target_include_directories(chip-8 PRIVATE
   # Include directories:
   "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
+
+add_custom_command(
+  TARGET chip-8 POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+          ${CMAKE_CURRENT_SOURCE_DIR}/lua/config.lua
+          ${CMAKE_CURRENT_BINARY_DIR}/config.lua
+          COMMENT "Copying lua.config into build directory...")
 
 install(TARGETS chip-8 RUNTIME DESTINATION bin)
