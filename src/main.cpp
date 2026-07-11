@@ -1,6 +1,6 @@
 #include "app-renderer.hpp"
-#include "register.hpp"
 #include "app-window.hpp"
+#include "register.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
@@ -33,10 +33,10 @@ auto main() -> int
   // Chip8::Register<std::uint8_t> RegF{};
   // Chip8::Register<std::uint16_t> RegI{};
   // Chip8::Register<std::uint16_t> RegPC{};
-  
-  static constexpr std::pair<std::int32_t, std::int32_t> window_xy {1280,720};
-  Chip8::AppWindow window {"Chip8", window_xy};
-  Chip8::AppRenderer renderer {window.window_ref()};
+
+  static constexpr std::pair<std::int32_t, std::int32_t> window_xy{1280, 720};
+  Chip8::AppWindow window{"Chip8", window_xy};
+  Chip8::AppRenderer renderer{window.window_ref()};
 
   try
   {
@@ -47,13 +47,12 @@ auto main() -> int
       SDL_Event event{};
       while (SDL_PollEvent(&event))
       {
-        if(event.type == SDL_EVENT_QUIT)
+        if (event.type == SDL_EVENT_QUIT)
         {
           done = true;
         }
       }
-      
-      //SDL_RenderClear(SDL_Renderer *renderer)
+
       renderer.clear_renderer();
       renderer.present();
     }
