@@ -77,7 +77,7 @@ auto create_buffer(std::ifstream &file, std::size_t size) -> std::vector<std::by
 
 [[nodiscard]] auto Chip8::MemBuf::get_value_at(std::uint16_t index) const -> std::uint8_t
 {
-  assert(index <= max_memory_buffer_size);
+  assert(index <= max_memory_buffer_size - 1);
   return static_cast<std::uint8_t>(buf_.at(index));
 }
 
