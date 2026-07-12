@@ -7,8 +7,7 @@
 #include <stdexcept>
 
 Chip8::AppWindow::AppWindow(const char *name, std::pair<std::int32_t, std::int32_t> dim_xy)
-    : window_{SDL_CreateWindow(name, dim_xy.first, dim_xy.second, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE),
-              &SDL_DestroyWindow}
+    : window_{SDL_CreateWindow(name, dim_xy.first, dim_xy.second, SDL_WINDOW_OPENGL), &SDL_DestroyWindow}
 {
   assert(name != nullptr);
   assert(dim_xy.first > 0);
@@ -20,7 +19,7 @@ Chip8::AppWindow::AppWindow(const char *name, std::pair<std::int32_t, std::int32
   }
 }
 
-auto Chip8::AppWindow::window_ref() -> SDL_Window&
+auto Chip8::AppWindow::window_ref() -> SDL_Window &
 {
   assert(window_.get() != nullptr);
   return *window_;
