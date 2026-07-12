@@ -24,6 +24,7 @@ add_executable(chip-8
   src/lua-instance.cpp
   src/main.cpp
   src/memory-buffer.cpp
+  src/screen-buffer.cpp
   src/timer.cpp
 )
 
