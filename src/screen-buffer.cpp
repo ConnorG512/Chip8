@@ -4,8 +4,7 @@
 
 void Chip8::ScrBuf::flip_pixel(std::size_t index)
 {
-  assert(index >= 0);
-  assert(index <= buf_.size());
+  assert(index <= buf_.size() -1);
 
   static constexpr auto flip_value {0xFFFFFFFF};
   buf_.at(index) ^= flip_value;
