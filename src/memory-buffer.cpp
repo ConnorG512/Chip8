@@ -8,6 +8,7 @@
 #include <limits>
 #include <ranges>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace
@@ -29,6 +30,9 @@ auto get_offset(Chip8::MemBuf::AddressOffset offset) -> Chip8::MemBuf::AddressRa
     case MemBuf::AddressOffset::Application:
       return application;
   };
+  
+  assert(false && "Invalid AddressOffset enum value hit.");
+  std::unreachable();
 }
 
 auto load_binary_from_path(const std::filesystem::path &path) -> std::ifstream
