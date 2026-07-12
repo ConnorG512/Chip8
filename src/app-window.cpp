@@ -6,12 +6,12 @@
 #include <format>
 #include <stdexcept>
 
-Chip8::AppWindow::AppWindow(const char *name, std::pair<std::int32_t, std::int32_t> dim_xy)
-    : window_{SDL_CreateWindow(name, dim_xy.first, dim_xy.second, SDL_WINDOW_OPENGL), &SDL_DestroyWindow}
+Chip8::AppWindow::AppWindow(const char *name, Dimensions dim_xy)
+    : window_{SDL_CreateWindow(name, dim_xy.width, dim_xy.height, SDL_WINDOW_OPENGL), &SDL_DestroyWindow}
 {
   assert(name != nullptr);
-  assert(dim_xy.first > 0);
-  assert(dim_xy.second > 0);
+  assert(dim_xy.width > 0);
+  assert(dim_xy.height > 0);
 
   if (window_ == nullptr) [[unlikely]]
   {

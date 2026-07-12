@@ -1,5 +1,6 @@
 #include "app-renderer.hpp"
 #include "app-window.hpp"
+#include "chip8-spec.hpp"
 #include "lua-instance.hpp"
 #include "register.hpp"
 
@@ -10,7 +11,6 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
-#include <utility>
 
 auto main() -> int
 {
@@ -37,9 +37,10 @@ auto main() -> int
 
   Chip8::LuaInstance lua_instance{};
 
-  std::pair<std::int32_t, std::int32_t> window_xy{64 * lua_instance.read_config("window_scale"),
-                                                  32 * lua_instance.read_config("window_scale")};
-  Chip8::AppWindow window{"Chip8", window_xy};
+  const std::int32_t window_scale{static_cast<std::int32_t>(lua_instance.read_config("window_scale"))};
+  Chip8::AppWindow window{
+      "Chip8",
+      {.width = Chip8::Spec::screen_width * window_scale, .height = Chip8::Spec::screen_height * window_scale}};
   Chip8::AppRenderer renderer{window.window_ref()};
 
   try

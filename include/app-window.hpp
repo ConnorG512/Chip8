@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
+#include <cstdint>
 #include <memory>
 
 namespace Chip8
@@ -9,7 +10,13 @@ namespace Chip8
 class AppWindow
 {
 public:
-  AppWindow(const char *name, std::pair<std::int32_t, std::int32_t> dim_xy);
+  struct Dimensions
+  {
+    std::int32_t width{};
+    std::int32_t height{};
+  };
+
+  AppWindow(const char *name, Dimensions xy);
 
   auto window_ref() -> SDL_Window &;
 
