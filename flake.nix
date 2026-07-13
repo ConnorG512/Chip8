@@ -59,7 +59,6 @@
           stdenv = pkgs.gcc16Stdenv;
           releaseMode = "debug";
           enableGgdb = true;
-          enableSanitizers = true;
         };
         release = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "release"; };
         relWithDebInfo = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "relWithDebInfo"; };
