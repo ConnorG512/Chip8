@@ -2,7 +2,9 @@
 #include "app-window.hpp"
 #include "chip8-spec.hpp"
 #include "lua-instance.hpp"
-#include "register.hpp"
+#include "memory-buffer.hpp"
+// #include "register.hpp"
+// #include "screen-buffer.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
@@ -11,6 +13,7 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <utility>
 
 auto main() -> int
 {
@@ -35,18 +38,35 @@ auto main() -> int
   // Chip8::Register<std::uint16_t> RegI{};
   // Chip8::Register<std::uint16_t> RegPC{};
 
-  Chip8::LuaInstance lua_instance{};
-
-  const std::int32_t window_scale{static_cast<std::int32_t>(lua_instance.read_config("window_scale"))};
-  Chip8::AppWindow window{
-      "Chip8",
-      {.width = Chip8::Spec::screen_width * window_scale, .height = Chip8::Spec::screen_height * window_scale}};
-  Chip8::AppRenderer renderer{window.window_ref()};
-
   try
   {
-    bool done{false};
+    Chip8::LuaInstance lua_instance{};
 
+    const std::int32_t window_scale{
+        static_cast<std::int32_t>(std::get<double>(lua_instance.read_config("window_scale")))};
+
+    Chip8::AppWindow window{
+        "Chip8",
+        {.width = Chip8::Spec::screen_width * window_scale, .height = Chip8::Spec::screen_height * window_scale}};
+
+    Chip8::AppRenderer renderer{window.window_ref()};
+    Chip8::MemBuf mem_buf{};
+    // Chip8::ScrBuf scr_buf{};
+
+    const auto result =
+        mem_buf.load_app_into_buffer(std::get<std::string>(lua_instance.read_config("app_name")))
+            .or_else(
+                [&](const Chip8::MemBuf::LoadAppErr &err) -> auto
+                {
+                  std::cerr << "Failed to load default App. Aborting. Error: " << static_cast<std::uint32_t>(std::to_underlying(err)) << '\n';
+                  return mem_buf.load_app_into_buffer("test-1");
+                });
+    if (!result.has_value())
+    {
+      return EXIT_FAILURE;
+    }
+
+    bool done{false};
     while (!done)
     {
       SDL_Event event{};
@@ -57,9 +77,12 @@ auto main() -> int
           done = true;
         }
       }
+      // Application Loop start:
 
       renderer.clear_renderer();
       renderer.present();
+
+      // Application Loop end:
     }
   }
   catch (std::exception &e)

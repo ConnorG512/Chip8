@@ -67,4 +67,11 @@ add_custom_command(
           ${CMAKE_CURRENT_BINARY_DIR}/config.lua
           COMMENT "Copying lua.config into build directory...")
 
+add_custom_command(
+  TARGET chip-8 POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_CURRENT_SOURCE_DIR}/ch8-apps
+          ${CMAKE_CURRENT_BINARY_DIR}/ch8-apps
+          COMMENT "Copying ch8-apps directory into build directory...")
+
 install(TARGETS chip-8 RUNTIME DESTINATION bin)

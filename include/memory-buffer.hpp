@@ -3,7 +3,8 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <filesystem>
+#include <expected>
+#include <string>
 
 namespace Chip8
 {
@@ -18,6 +19,7 @@ public:
     std::int16_t index{};
     std::int8_t value{};
   };
+  auto store_value_in_buffer(MemoryStore store) -> void;
 
   struct AddressRange
   {
@@ -31,10 +33,14 @@ public:
     Characters,
     Application,
   };
+  enum class LoadAppErr : std::uint8_t
+  {
+    EMPTY_APP_NAME,
+    INVALID_PATH,
+  };
+  [[nodiscard]] auto load_app_into_buffer(const std::string &app_name) -> std::expected<void, LoadAppErr>;
 
-  auto store_value_in_buffer(MemoryStore store) -> void;
-
-  void load_file_to_buffer(const std::filesystem::path &path, AddressOffset offset);
+  [[nodiscard]] auto fetch_instruction(std::size_t index, bool swap_bytes = true) -> std::array<std::byte, 2>;
 
 private:
   static constexpr auto max_memory_buffer_size{4096};

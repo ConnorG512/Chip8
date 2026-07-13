@@ -1,7 +1,11 @@
 #include "memory-buffer.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <expected>
 #include <filesystem>
 #include <format>
 #include <fstream>
@@ -30,7 +34,7 @@ auto get_offset(Chip8::MemBuf::AddressOffset offset) -> Chip8::MemBuf::AddressRa
     case MemBuf::AddressOffset::Application:
       return application;
   };
-  
+
   assert(false && "Invalid AddressOffset enum value hit.");
   std::unreachable();
 }
@@ -77,6 +81,20 @@ auto create_buffer(std::ifstream &file, std::size_t size) -> std::vector<std::by
 
   return file_buffer;
 }
+
+[[nodiscard]] auto swap_byte_endian(std::array<std::byte, 2> byte_arr) noexcept -> std::array<std::byte, 2>
+{
+  constexpr auto first_byte{0};
+  constexpr auto last_byte{1};
+
+  return {byte_arr.at(last_byte), byte_arr.at(first_byte)};
+}
+
+void copy_to_buffer(std::span<const std::byte> src_buffer, std::span<std::byte> dest_bufffer,
+                    Chip8::MemBuf::AddressOffset buffer_offset) noexcept
+{
+  std::ranges::copy(src_buffer, std::ranges::begin(dest_bufffer.subspan(get_offset(buffer_offset).start)));
+}
 } // namespace
 
 [[nodiscard]] auto Chip8::MemBuf::get_value_at(std::uint16_t index) const -> std::uint8_t
@@ -90,14 +108,42 @@ auto Chip8::MemBuf::store_value_in_buffer(MemoryStore store) -> void
   buf_.at(store.index) = static_cast<std::byte>(store.value);
 }
 
-void Chip8::MemBuf::load_file_to_buffer(const std::filesystem::path &path, AddressOffset offset)
+auto Chip8::MemBuf::load_app_into_buffer(const std::string &app_name) -> std::expected<void, LoadAppErr>
 {
-  auto file{load_binary_from_path(path)};
-  const auto file_size{get_file_len(file)};
-  auto file_buffer{create_buffer(file, file_size)};
+  if (app_name.empty())
+  {
+    return std::unexpected(LoadAppErr::EMPTY_APP_NAME);
+  }
 
-  const auto offsets{get_offset(offset)};
+  const std::filesystem::path app_path{std::filesystem::path("ch8-apps") / std::format("{}{}", app_name, ".ch8")};
+  if (!std::filesystem::exists(app_path))
+  {
+    return std::unexpected(LoadAppErr::INVALID_PATH);
+  }
+  
+  const auto app_file_buffer = [](const std::filesystem::path &path) -> std::vector<std::byte> {
+    auto app_file{load_binary_from_path(path)};
+    const auto app_file_size{get_file_len(app_file)};
+    return create_buffer(app_file, app_file_size);
+  }(app_path);
+  
+  copy_to_buffer(app_file_buffer, buf_, AddressOffset::Application);
+  return {};
+}
 
-  std::ranges::copy(file_buffer | std::views::take(file_size),
-                    std::ranges::begin(std::span{buf_}.subspan(offsets.start)));
+auto Chip8::MemBuf::fetch_instruction(std::size_t index, bool swap_bytes) -> std::array<std::byte, 2>
+{
+  static constexpr auto final_valid_memory_offset{2};
+  assert(index < buf_.size() - final_valid_memory_offset);
+
+  static constexpr auto following_byte{1};
+  const std::array<std::byte, 2> fetched_bytes{buf_.at(index), buf_.at(index + following_byte)};
+
+  // Chip 8 instructions are encoded in big endian.
+  if (swap_bytes)
+  {
+    return swap_byte_endian(fetched_bytes);
+  }
+
+  return fetched_bytes;
 }
