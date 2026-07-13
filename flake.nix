@@ -26,10 +26,9 @@
           cmakeBuildProfiles = import ./nix/cmake-profiles.nix;
         in
         {
-          name = "${finalAttrs.pname}-${finalAttrs.version}-${finalAttrs.system}";
+          name = "${finalAttrs.pname}-${finalAttrs.version}-${stdenv.hostPlatform.system}";
           pname = "chip-8";
           version = "0.0.1";
-          system = "x86_64-linux";
           src = ./.;
 
           dontStrip = cmakeBuildProfiles.${releaseMode}.symbols;

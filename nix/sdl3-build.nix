@@ -10,7 +10,6 @@
 , libGL
 , udev
 , libxkbcommon
-, system
 , releaseMode
 }:
 
@@ -19,10 +18,9 @@ let
   cmakeBuildProfiles = import ./cmake-profiles.nix;
 in
 {
-  name = "${finalAttrs.pname}-${finalAttrs.version}-${finalAttrs.system}";
+  name = "${finalAttrs.pname}-${finalAttrs.version}-${stdenv.hostPlatform.system}";
   pname = "sdl3";
   version = "3.4.12";
-  inherit system;
 
   src = fetchFromGitHub {
     owner = "libsdl-org";

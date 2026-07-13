@@ -3,7 +3,6 @@
 , callPackage
 , fetchurl
 , gnumake
-, system
 , releaseMode
 }:
 
@@ -12,10 +11,9 @@ let
   cmakeBuildProfiles = import ./cmake-profiles.nix;
 in
 {
-  name = "${finalAttrs.pname}-${finalAttrs.version}-${finalAttrs.system}";
+  name = "${finalAttrs.pname}-${finalAttrs.version}-${stdenv.hostPlatform.system}";
   pname = "lua";
   version = "5.5.0";
-  system = "x86_64-linux";
   src = fetchurl {
     url = "https://www.lua.org/ftp/lua-${finalAttrs.version}.tar.gz";
     hash = "sha256-V8zDK7vQBcq3W8xSREBSU1r2kXiduiuQFtXFBkDWiz0=";
