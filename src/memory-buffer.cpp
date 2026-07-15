@@ -131,19 +131,14 @@ auto Chip8::MemBuf::load_app_into_buffer(const std::string &app_name) -> std::ex
   return {};
 }
 
-auto Chip8::MemBuf::fetch_instruction(std::size_t index, bool swap_bytes) -> std::array<std::byte, 2>
+auto Chip8::MemBuf::fetch_instruction(std::size_t index) -> std::array<std::byte, 2>
 {
+  assert(index >= 0);
   static constexpr auto final_valid_memory_offset{2};
   assert(index < buf_.size() - final_valid_memory_offset);
 
   static constexpr auto following_byte{1};
   const std::array<std::byte, 2> fetched_bytes{buf_.at(index), buf_.at(index + following_byte)};
-
-  // Chip 8 instructions are encoded in big endian.
-  if (swap_bytes)
-  {
-    return swap_byte_endian(fetched_bytes);
-  }
 
   return fetched_bytes;
 }

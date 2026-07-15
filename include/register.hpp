@@ -6,7 +6,6 @@
 
 namespace Chip8
 {
-
 template <typename T>
 concept RegisterType = std::is_same_v<T, std::uint8_t> || std::is_same_v<T, std::uint16_t>;
 
@@ -20,7 +19,7 @@ public:
       static constexpr auto max_address_value{0xFFF};
       assert(val <= max_address_value);
     }
-    
+
     held_value_ = val;
   }
   [[nodiscard]] auto get_data() const noexcept -> T { return held_value_; }

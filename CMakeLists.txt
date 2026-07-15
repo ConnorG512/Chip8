@@ -21,6 +21,7 @@ endif()
 add_executable(chip-8 
   src/app-renderer.cpp
   src/app-window.cpp
+  src/decode-instruction.cpp
   src/lua-instance.cpp
   src/main.cpp
   src/memory-buffer.cpp

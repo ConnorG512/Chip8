@@ -40,7 +40,7 @@ public:
   };
   [[nodiscard]] auto load_app_into_buffer(const std::string &app_name) -> std::expected<void, LoadAppErr>;
 
-  [[nodiscard]] auto fetch_instruction(std::size_t index, bool swap_bytes = true) -> std::array<std::byte, 2>;
+  [[nodiscard]] auto fetch_instruction(std::size_t index) -> std::array<std::byte, 2>;
 
 private:
   static constexpr auto max_memory_buffer_size{4096};

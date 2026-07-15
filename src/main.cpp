@@ -1,6 +1,8 @@
 #include "app-renderer.hpp"
 #include "app-window.hpp"
 #include "chip8-spec.hpp"
+#include "decode-instruction.hpp"
+#include "device.hpp"
 #include "lua-instance.hpp"
 #include "memory-buffer.hpp"
 // #include "register.hpp"
@@ -19,24 +21,7 @@ auto main() -> int
 {
   SDL_Init(SDL_INIT_VIDEO);
 
-  // Chip8::Register<std::uint8_t> Reg0{};
-  // Chip8::Register<std::uint8_t> Reg1{};
-  // Chip8::Register<std::uint8_t> Reg2{};
-  // Chip8::Register<std::uint8_t> Reg3{};
-  // Chip8::Register<std::uint8_t> Reg4{};
-  // Chip8::Register<std::uint8_t> Reg5{};
-  // Chip8::Register<std::uint8_t> Reg6{};
-  // Chip8::Register<std::uint8_t> Reg7{};
-  // Chip8::Register<std::uint8_t> Reg8{};
-  // Chip8::Register<std::uint8_t> Reg9{};
-  // Chip8::Register<std::uint8_t> RegA{};
-  // Chip8::Register<std::uint8_t> RegB{};
-  // Chip8::Register<std::uint8_t> RegC{};
-  // Chip8::Register<std::uint8_t> RegD{};
-  // Chip8::Register<std::uint8_t> RegE{};
-  // Chip8::Register<std::uint8_t> RegF{};
-  // Chip8::Register<std::uint16_t> RegI{};
-  // Chip8::Register<std::uint16_t> RegPC{};
+  Chip8::Device device_{};
 
   try
   {
@@ -51,7 +36,6 @@ auto main() -> int
 
     Chip8::AppRenderer renderer{window.window_ref()};
     Chip8::MemBuf mem_buf{};
-    // Chip8::ScrBuf scr_buf{};
 
     const auto result =
         mem_buf.load_app_into_buffer(std::get<std::string>(lua_instance.read_config("app_name")))
@@ -67,6 +51,8 @@ auto main() -> int
       return EXIT_FAILURE;
     }
 
+    
+
     bool done{false};
     while (!done)
     {
@@ -79,6 +65,8 @@ auto main() -> int
         }
       }
       // Application Loop start:
+      
+      auto fetched_instruction {Chip8::decode_instruction(mem_buf.fetch_instruction(0))};
 
       renderer.clear_renderer();
       renderer.present();
