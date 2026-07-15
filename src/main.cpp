@@ -58,7 +58,7 @@ auto main() -> int
             .or_else(
                 [&](const Chip8::MemBuf::LoadAppErr &err) -> auto
                 {
-                  std::cerr << "Failed to load app from Lua string, Aborting. Error: " << static_cast<std::uint32_t>(std::to_underlying(err)) << '\n';
+                  std::cerr << "Failed to load app from Lua string. Error: " << static_cast<std::uint32_t>(std::to_underlying(err)) << '\n';
                   return mem_buf.load_app_into_buffer("test-1");
                 });
     if (!result.has_value())
