@@ -66,7 +66,7 @@ auto main() -> int
       }
       // Application Loop start:
       
-      auto fetched_instruction {Chip8::decode_instruction(mem_buf.fetch_instruction(0))};
+      auto fetched_instruction {Chip8::decode_instruction(mem_buf.fetch_instruction(Chip8::MemBuf::AddressSection::Application, 0))};
 
       renderer.clear_renderer();
       renderer.present();

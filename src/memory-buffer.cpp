@@ -11,32 +11,48 @@
 #include <fstream>
 #include <limits>
 #include <ranges>
+#include <span>
 #include <stdexcept>
-#include <utility>
 #include <vector>
 
 namespace
 {
-auto get_offset(Chip8::MemBuf::AddressOffset offset) -> Chip8::MemBuf::AddressRange
+auto get_offset(std::span<std::byte> buffer, Chip8::MemBuf::AddressSection addr_sec) -> std::span<std::byte>
 {
   using MemBuf = Chip8::MemBuf;
 
-  static constexpr MemBuf::AddressRange system_reserved = {.start = 0x000, .end = 0x1FF};
-  static constexpr MemBuf::AddressRange characters = {.start = 0x050, .end = 0x0A0};
-  static constexpr MemBuf::AddressRange application = {.start = 0x200, .end = 0xFFF};
-
-  switch (offset)
+  struct StartEnd
   {
-    case MemBuf::AddressOffset::SystemReserve:
-      return system_reserved;
-    case MemBuf::AddressOffset::Characters:
-      return characters;
-    case MemBuf::AddressOffset::Application:
-      return application;
+    std::size_t start{0};
+    std::size_t end{0};
   };
 
-  assert(false && "Invalid AddressOffset enum value hit.");
-  std::unreachable();
+  static constexpr StartEnd system_reserve{
+      .start = 0x000,
+      .end = 0x1FF,
+  };
+
+  static constexpr StartEnd character_reserve{
+      .start = 0x050,
+      .end = 0x0A0,
+  };
+
+  static constexpr StartEnd application_reserve{
+      .start = 0x200,
+      .end = 0xFFF,
+  };
+
+  auto calculate_range = [](StartEnd reserve) consteval -> std::size_t { return (reserve.end - reserve.start) + 1; };
+
+  switch (addr_sec)
+  {
+    case MemBuf::AddressSection::SystemReserve:
+      return std::span{buffer}.subspan(system_reserve.start, calculate_range(system_reserve));
+    case MemBuf::AddressSection::Characters:
+      return std::span{buffer}.subspan(character_reserve.start, calculate_range(character_reserve));
+    case MemBuf::AddressSection::Application:
+      return std::span{buffer}.subspan(character_reserve.start, calculate_range(application_reserve));
+  };
 }
 
 auto load_binary_from_path(const std::filesystem::path &path) -> std::ifstream
@@ -83,9 +99,10 @@ auto create_buffer(std::ifstream &file, std::size_t size) -> std::vector<std::by
 }
 
 void copy_to_buffer(std::span<const std::byte> src_buffer, std::span<std::byte> dest_bufffer,
-                    Chip8::MemBuf::AddressOffset buffer_offset) noexcept
+                    Chip8::MemBuf::AddressSection buffer_offset) noexcept
 {
-  std::ranges::copy(src_buffer, std::ranges::begin(dest_bufffer.subspan(get_offset(buffer_offset).start)));
+  const auto copy_area{get_offset(dest_bufffer, buffer_offset)};
+  std::ranges::copy(src_buffer, std::ranges::begin(copy_area));
 }
 } // namespace
 
@@ -112,25 +129,24 @@ auto Chip8::MemBuf::load_app_into_buffer(const std::string &app_name) -> std::ex
   {
     return std::unexpected(LoadAppErr::INVALID_PATH);
   }
-  
-  const auto app_file_buffer = [](const std::filesystem::path &path) -> std::vector<std::byte> {
+
+  const auto app_file_buffer = [](const std::filesystem::path &path) -> std::vector<std::byte>
+  {
     auto app_file{load_binary_from_path(path)};
     const auto app_file_size{get_file_len(app_file)};
     return create_buffer(app_file, app_file_size);
   }(app_path);
-  
-  copy_to_buffer(app_file_buffer, buf_, AddressOffset::Application);
+
+  copy_to_buffer(app_file_buffer, buf_, AddressSection::Application);
   return {};
 }
 
-auto Chip8::MemBuf::fetch_instruction(std::size_t index) -> std::array<std::byte, 2>
+auto Chip8::MemBuf::fetch_instruction(AddressSection addr_section, std::size_t offset) -> std::array<std::byte, 2>
 {
-  assert(index >= 0);
-  static constexpr auto final_valid_memory_offset{2};
-  assert(index < buf_.size() - final_valid_memory_offset);
+  const auto available_range{get_offset(buf_, addr_section)};
 
   static constexpr auto following_byte{1};
-  const std::array<std::byte, 2> fetched_bytes{buf_.at(index), buf_.at(index + following_byte)};
+  const std::array<std::byte, 2> fetched_bytes{available_range.at(offset), available_range.at(offset + following_byte)};
 
   return fetched_bytes;
 }

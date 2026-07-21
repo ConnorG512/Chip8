@@ -21,13 +21,7 @@ public:
   };
   auto store_value_in_buffer(MemoryStore store) -> void;
 
-  struct AddressRange
-  {
-    std::int16_t start{0};
-    std::int16_t end{0};
-  };
-
-  enum class AddressOffset : std::uint8_t
+  enum class AddressSection : std::uint8_t
   {
     SystemReserve,
     Characters,
@@ -39,11 +33,12 @@ public:
     INVALID_PATH,
   };
   [[nodiscard]] auto load_app_into_buffer(const std::string &app_name) -> std::expected<void, LoadAppErr>;
+  [[nodiscard]] auto fetch_instruction(AddressSection addr_section, std::size_t offset) -> std::array<std::byte, 2>;
+  
 
-  [[nodiscard]] auto fetch_instruction(std::size_t index) -> std::array<std::byte, 2>;
+  static constexpr auto max_memory_buffer_size{4096};
 
 private:
-  static constexpr auto max_memory_buffer_size{4096};
   std::array<std::byte, max_memory_buffer_size> buf_{};
 };
 } // namespace Chip8
