@@ -50,6 +50,7 @@ enum class Position : std::uint8_t
 
 enum class Instructions : std::uint8_t
 {
+  SetValueToRegister = 6,
   AddValueToRegister = 7,
   RegisterToRegisterArith = 8,
 };
@@ -77,6 +78,7 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) noexcept
                 get_nibble(instruction.at(std::to_underlying(Position::Last)), Position::Last)),
         };
       }
+    case std::to_underlying(Instructions::SetValueToRegister):
     case std::to_underlying(Instructions::AddValueToRegister):
       {
         return DecodeTypes::ValueToRegister {
