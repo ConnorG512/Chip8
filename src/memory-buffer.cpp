@@ -82,14 +82,6 @@ auto create_buffer(std::ifstream &file, std::size_t size) -> std::vector<std::by
   return file_buffer;
 }
 
-[[nodiscard]] auto swap_byte_endian(std::array<std::byte, 2> byte_arr) noexcept -> std::array<std::byte, 2>
-{
-  constexpr auto first_byte{0};
-  constexpr auto last_byte{1};
-
-  return {byte_arr.at(last_byte), byte_arr.at(first_byte)};
-}
-
 void copy_to_buffer(std::span<const std::byte> src_buffer, std::span<std::byte> dest_bufffer,
                     Chip8::MemBuf::AddressOffset buffer_offset) noexcept
 {
