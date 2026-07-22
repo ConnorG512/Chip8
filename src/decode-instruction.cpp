@@ -75,7 +75,10 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
       }
     case Instructions::SetValueToRegister:
       {
-        return DecodeTypes::SetValueToRegister{.value = get_nibble(first_byte)};
+        return DecodeTypes::SetValueToRegister{
+            .value = get_nibble(first_byte),
+            .register_id = get_nibble(first_byte, Position::Last),
+        };
       }
     case Instructions::AddValueToRegister:
       {
