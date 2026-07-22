@@ -5,17 +5,12 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
-#include <iostream>
+#include <format>
+#include <stdexcept>
 #include <utility>
 
 namespace
 {
-void unimplemmented_opcode_message(const int16_t instruction_val)
-{
-  std::cout << "Unsupported instruction with value: [" << static_cast<std::uint32_t>(instruction_val)
-            << "]. Returning value 0.\n";
-}
-
 [[nodiscard]] auto get_instruction(std::byte instruction_byte) -> std::uint8_t
 {
   constexpr static auto one_nibble{4};
@@ -57,33 +52,36 @@ enum class Instructions : std::uint8_t
 
 } // namespace
 
-auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) noexcept
-    -> std::variant<std::monostate, DecodeTypes::RegisterToRegister, DecodeTypes::ValueToRegister>
+auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
+    -> std::variant<DecodeTypes::RegisterToRegister, DecodeTypes::AddValueToRegister, DecodeTypes::SetValueToRegister>
 {
-  const auto found_instruction{get_instruction(instruction.at(0))};
+  const auto first_byte{instruction.at(std::to_underlying(Position::First))};
+  const auto last_byte{instruction.at(std::to_underlying(Position::Last))};
 
-  switch (found_instruction)
+  const auto instruction_found{get_instruction(first_byte)};
+  switch (static_cast<Instructions>(instruction_found))
   {
     default:
       {
-        unimplemmented_opcode_message(found_instruction);
-        return std::monostate();
+        throw std::runtime_error(std::format("Unsupported Instruction hit! Value: {}.", instruction_found));
       }
-    case std::to_underlying(Instructions::RegisterToRegisterArith):
+    case Instructions::RegisterToRegisterArith:
       {
         return DecodeTypes::RegisterToRegister{
-            .first_register = get_nibble(instruction.at(std::to_underlying(Position::First)), Position::Last),
-            .second_register = get_nibble(instruction.at(std::to_underlying(Position::Last)), Position::First),
-            .arith_instruction = static_cast<ALUInstructions>(
-                get_nibble(instruction.at(std::to_underlying(Position::Last)), Position::Last)),
+            .first_register = get_nibble(first_byte, Position::Last),
+            .second_register = get_nibble(last_byte, Position::First),
+            .arith_instruction = static_cast<ALUInstructions>(get_nibble(last_byte, Position::Last)),
         };
       }
-    case std::to_underlying(Instructions::SetValueToRegister):
-    case std::to_underlying(Instructions::AddValueToRegister):
+    case Instructions::SetValueToRegister:
       {
-        return DecodeTypes::ValueToRegister {
-          .value = std::to_integer<std::uint16_t>(instruction.at(std::to_underlying(Position::Last))),
-          .register_id = get_nibble(instruction.at(std::to_underlying(Position::First)), Position::Last),
+        return DecodeTypes::SetValueToRegister{.value = get_nibble(first_byte)};
+      }
+    case Instructions::AddValueToRegister:
+      {
+        return DecodeTypes::AddValueToRegister{
+            .value = std::to_integer<std::uint16_t>(last_byte),
+            .register_id = get_nibble(first_byte, Position::Last),
         };
       }
   }

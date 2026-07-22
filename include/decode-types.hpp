@@ -24,7 +24,12 @@ struct RegisterToRegister
   ALUInstructions arith_instruction{0x0};
 };
 
-struct ValueToRegister 
+struct SetValueToRegister { 
+  std::uint16_t value{0};
+  std::uint8_t register_id {0};
+};
+
+struct AddValueToRegister 
 {
   std::uint16_t value{0};
   std::uint8_t register_id {0};
