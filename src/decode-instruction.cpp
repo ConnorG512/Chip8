@@ -45,6 +45,9 @@ enum class Position : std::uint8_t
 
 enum class Instructions : std::uint8_t
 {
+  SkipNextInstructionEqual = 3,
+  SkipNextInstructionNotEqual = 4,
+  SkipNextInstructionEqualRegister = 5,
   SetValueToRegister = 6,
   AddValueToRegister = 7,
   RegisterToRegisterArith = 8,
@@ -53,7 +56,9 @@ enum class Instructions : std::uint8_t
 } // namespace
 
 auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
-    -> std::variant<DecodeTypes::RegisterToRegister, DecodeTypes::AddValueToRegister, DecodeTypes::SetValueToRegister>
+    -> std::variant<DecodeTypes::SkipNextInstructionEqual, DecodeTypes::SkipNextInstructionNotEqual,
+                    DecodeTypes::RegisterToRegisterArith, DecodeTypes::AddValueToRegister,
+                    DecodeTypes::SetValueToRegister, DecodeTypes::SkipNextInstructionEqualRegister>
 {
   const auto first_byte{instruction.at(std::to_underlying(Position::First))};
   const auto last_byte{instruction.at(std::to_underlying(Position::Last))};
@@ -63,14 +68,27 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
   {
     default:
       {
-        throw std::runtime_error(std::format("Unsupported Instruction hit! Value: {}.", instruction_found));
+        throw std::runtime_error(std::format("Cannot decode given instruction! Value: {}.", instruction_found));
       }
-    case Instructions::RegisterToRegisterArith:
+    case Instructions::SkipNextInstructionEqual:
       {
-        return DecodeTypes::RegisterToRegister{
-            .first_register = get_nibble(first_byte, Position::Last),
-            .second_register = get_nibble(last_byte, Position::First),
-            .arith_instruction = static_cast<ALUInstructions>(get_nibble(last_byte, Position::Last)),
+        return DecodeTypes::SkipNextInstructionEqual{
+            .value = std::to_integer<std::uint16_t>(last_byte),
+            .register_id = get_nibble(first_byte, Position::Last),
+        };
+      }
+    case Instructions::SkipNextInstructionNotEqual:
+      {
+        return DecodeTypes::SkipNextInstructionNotEqual{
+            .value = std::to_integer<std::uint16_t>(last_byte),
+            .register_id = get_nibble(first_byte, Position::Last),
+        };
+      }
+    case Instructions::SkipNextInstructionEqualRegister:
+      {
+        return DecodeTypes::SkipNextInstructionEqualRegister{
+            .register_id_1 = get_nibble(first_byte, Position::Last),
+            .register_id_2 = get_nibble(last_byte, Position::First),
         };
       }
     case Instructions::SetValueToRegister:
@@ -85,6 +103,14 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
         return DecodeTypes::AddValueToRegister{
             .value = std::to_integer<std::uint16_t>(last_byte),
             .register_id = get_nibble(first_byte, Position::Last),
+        };
+      }
+    case Instructions::RegisterToRegisterArith:
+      {
+        return DecodeTypes::RegisterToRegisterArith{
+            .first_register = get_nibble(first_byte, Position::Last),
+            .second_register = get_nibble(last_byte, Position::First),
+            .arith_instruction = static_cast<ALUInstructions>(get_nibble(last_byte, Position::Last)),
         };
       }
   }

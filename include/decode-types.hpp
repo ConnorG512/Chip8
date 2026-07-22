@@ -17,22 +17,41 @@ enum class ALUInstructions : std::uint8_t
 
 namespace Chip8::DecodeTypes
 {
-struct RegisterToRegister
+struct SkipNextInstructionEqual
 {
-  std::uint8_t first_register {0};
-  std::uint8_t second_register {0};
+  std::uint16_t value{0};
+  std::uint8_t register_id{0};
+};
+
+struct SkipNextInstructionNotEqual
+{
+  std::uint16_t value{0};
+  std::uint8_t register_id{0};
+};
+
+struct SkipNextInstructionEqualRegister
+{
+  std::uint8_t register_id_1{0};
+  std::uint8_t register_id_2{0};
+};
+
+struct SetValueToRegister
+{
+  std::uint16_t value{0};
+  std::uint8_t register_id{0};
+};
+
+struct AddValueToRegister
+{
+  std::uint16_t value{0};
+  std::uint8_t register_id{0};
+};
+
+struct RegisterToRegisterArith
+{
+  std::uint8_t first_register{0};
+  std::uint8_t second_register{0};
   ALUInstructions arith_instruction{0x0};
-};
-
-struct SetValueToRegister { 
-  std::uint16_t value{0};
-  std::uint8_t register_id {0};
-};
-
-struct AddValueToRegister 
-{
-  std::uint16_t value{0};
-  std::uint8_t register_id {0};
 };
 
 } // namespace Chip8::DecodeTypes
