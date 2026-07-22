@@ -74,7 +74,7 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) noexcept
         return DecodeTypes::RegisterToRegister{
             .first_register = get_nibble(instruction.at(std::to_underlying(Position::First)), Position::Last),
             .second_register = get_nibble(instruction.at(std::to_underlying(Position::Last)), Position::First),
-            .arith_instruction = static_cast<ArithInstructions>(
+            .arith_instruction = static_cast<ALUInstructions>(
                 get_nibble(instruction.at(std::to_underlying(Position::Last)), Position::Last)),
         };
       }

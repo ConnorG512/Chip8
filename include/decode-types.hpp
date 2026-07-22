@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-enum class ArithInstructions : std::uint8_t
+enum class ALUInstructions : std::uint8_t
 {
   Ld = 0x0,
   Or = 0x1,
@@ -21,7 +21,7 @@ struct RegisterToRegister
 {
   std::uint8_t first_register {0};
   std::uint8_t second_register {0};
-  ArithInstructions arith_instruction{0x0};
+  ALUInstructions arith_instruction{0x0};
 };
 
 struct ValueToRegister 
