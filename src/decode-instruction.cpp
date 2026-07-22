@@ -45,6 +45,7 @@ enum class Position : std::uint8_t
 
 enum class Instructions : std::uint8_t
 {
+  System = 0,
   SkipNextInstructionEqual = 3,
   SkipNextInstructionNotEqual = 4,
   SkipNextInstructionEqualRegister = 5,
@@ -56,9 +57,10 @@ enum class Instructions : std::uint8_t
 } // namespace
 
 auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
-    -> std::variant<DecodeTypes::SkipNextInstructionEqual, DecodeTypes::SkipNextInstructionNotEqual,
-                    DecodeTypes::RegisterToRegisterArith, DecodeTypes::AddValueToRegister,
-                    DecodeTypes::SetValueToRegister, DecodeTypes::SkipNextInstructionEqualRegister>
+    -> std::variant<DecodeTypes::ClearDisplay, DecodeTypes::ReturnFromSubroutine, DecodeTypes::SkipNextInstructionEqual,
+                    DecodeTypes::SkipNextInstructionNotEqual, DecodeTypes::RegisterToRegisterArith,
+                    DecodeTypes::AddValueToRegister, DecodeTypes::SetValueToRegister,
+                    DecodeTypes::SkipNextInstructionEqualRegister>
 {
   const auto first_byte{instruction.at(std::to_underlying(Position::First))};
   const auto last_byte{instruction.at(std::to_underlying(Position::Last))};
@@ -69,6 +71,21 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
     default:
       {
         throw std::runtime_error(std::format("Cannot decode given instruction! Value: {}.", instruction_found));
+      }
+    case Instructions::System:
+      {
+        constexpr static std::byte clear_display_byte{0xE0};
+        constexpr static std::byte return_from_subroutine_byte{0xEE};
+
+        if (last_byte == clear_display_byte)
+        {
+          return DecodeTypes::ClearDisplay{};
+        }
+
+        if (last_byte == return_from_subroutine_byte)
+        {
+          return DecodeTypes::ReturnFromSubroutine{};
+        }
       }
     case Instructions::SkipNextInstructionEqual:
       {

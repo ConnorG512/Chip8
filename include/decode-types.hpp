@@ -17,6 +17,14 @@ enum class ALUInstructions : std::uint8_t
 
 namespace Chip8::DecodeTypes
 {
+struct ClearDisplay
+{
+};
+
+struct ReturnFromSubroutine
+{
+};
+
 struct SkipNextInstructionEqual
 {
   std::uint16_t value{0};
