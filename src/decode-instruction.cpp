@@ -65,6 +65,7 @@ enum class Instructions : std::uint8_t
   SetValueToRegister = 0x6,
   AddValueToRegister = 0x7,
   RegisterToRegisterArith = 0x8,
+  LoadIntoIndexRegister = 0xA,
 };
 
 } // namespace
@@ -149,6 +150,12 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) -> DecodeTy
             .first_register = get_nibble(first_byte, Position::Last),
             .second_register = get_nibble(last_byte, Position::First),
             .arith_instruction = static_cast<ALUInstructions>(get_nibble(last_byte, Position::Last)),
+        };
+      }
+    case Instructions::LoadIntoIndexRegister:
+      {
+        return DecodeTypes::LoadIntoIndexRegister{
+            .value = get_three_byte_val(instruction),
         };
       }
   }

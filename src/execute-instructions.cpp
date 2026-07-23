@@ -63,6 +63,11 @@ void Chip8::execute(DecodeTypes::List decode_list, Device &device)
           // TODO
           return;
         }
+
+        if constexpr (std::is_same_v<DecT, DecodeTypes::LoadIntoIndexRegister>)
+        {
+          device.index_register_.assign_val(list.value);
+        }
       },
       decode_list);
 }
