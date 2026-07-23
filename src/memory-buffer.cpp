@@ -1,3 +1,4 @@
+#include "chip8-spec.hpp"
 #include "memory-buffer.hpp"
 
 #include <algorithm>
@@ -21,37 +22,19 @@ auto get_offset(std::span<std::byte> buffer, Chip8::MemBuf::AddressSection addr_
 {
   using MemBuf = Chip8::MemBuf;
 
-  struct StartEnd
-  {
-    std::size_t start{0};
-    std::size_t end{0};
-  };
-
-  static constexpr StartEnd system_reserve{
-      .start = 0x000,
-      .end = 0x1FF,
-  };
-
-  static constexpr StartEnd character_reserve{
-      .start = 0x050,
-      .end = 0x0A0,
-  };
-
-  static constexpr StartEnd application_reserve{
-      .start = 0x200,
-      .end = 0xFFF,
-  };
-
-  auto calculate_range = [](StartEnd reserve) consteval -> std::size_t { return (reserve.end - reserve.start) + 1; };
+  auto calculate_range = [](Chip8::Spec::MemoryPortions reserve) consteval -> std::size_t
+  { return (reserve.end - reserve.start) + 1; };
 
   switch (addr_sec)
   {
     case MemBuf::AddressSection::SystemReserve:
-      return std::span{buffer}.subspan(system_reserve.start, calculate_range(system_reserve));
+      return std::span{buffer}.subspan(Chip8::Spec::system_reserve.start, calculate_range(Chip8::Spec::system_reserve));
     case MemBuf::AddressSection::Characters:
-      return std::span{buffer}.subspan(character_reserve.start, calculate_range(character_reserve));
+      return std::span{buffer}.subspan(Chip8::Spec::character_reserve.start,
+                                       calculate_range(Chip8::Spec::character_reserve));
     case MemBuf::AddressSection::Application:
-      return std::span{buffer}.subspan(character_reserve.start, calculate_range(application_reserve));
+      return std::span{buffer}.subspan(Chip8::Spec::character_reserve.start,
+                                       calculate_range(Chip8::Spec::application_reserve));
   };
 }
 
