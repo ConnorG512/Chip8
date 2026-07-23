@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <variant>
 
 enum class ALUInstructions : std::uint8_t
 {
@@ -61,5 +62,9 @@ struct RegisterToRegisterArith
   std::uint8_t second_register{0};
   ALUInstructions arith_instruction{0x0};
 };
+
+using List =
+    std::variant<ClearDisplay, ReturnFromSubroutine, SkipNextInstructionEqual, SkipNextInstructionNotEqual,
+                 SkipNextInstructionEqualRegister, SetValueToRegister, AddValueToRegister, RegisterToRegisterArith>;
 
 } // namespace Chip8::DecodeTypes
