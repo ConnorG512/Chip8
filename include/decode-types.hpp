@@ -26,6 +26,10 @@ struct ReturnFromSubroutine
 {
 };
 
+struct JumpAddress {
+  std::uint16_t value{0};
+};
+
 struct SkipNextInstructionEqual
 {
   std::uint16_t value{0};
@@ -64,7 +68,7 @@ struct RegisterToRegisterArith
 };
 
 using List =
-    std::variant<ClearDisplay, ReturnFromSubroutine, SkipNextInstructionEqual, SkipNextInstructionNotEqual,
+    std::variant<ClearDisplay, ReturnFromSubroutine, JumpAddress, SkipNextInstructionEqual, SkipNextInstructionNotEqual,
                  SkipNextInstructionEqualRegister, SetValueToRegister, AddValueToRegister, RegisterToRegisterArith>;
 
 } // namespace Chip8::DecodeTypes

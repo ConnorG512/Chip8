@@ -2,9 +2,11 @@
 #include "decode-types.hpp"
 
 #include <array>
+#include <bit>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <format>
 #include <stdexcept>
 #include <utility>
@@ -43,21 +45,31 @@ enum class Position : std::uint8_t
   return std::to_integer<std::uint8_t>(register_byte & last_nibble_mask);
 }
 
+[[nodiscard]] auto get_three_byte_val(std::array<std::byte, 2> instruction) -> std::uint16_t
+{
+  std::uint16_t number{};
+  std::memcpy(&number, instruction.data(), sizeof(instruction));
+  number = std::byteswap(number);
+
+  static constexpr auto three_nibble_mask{0x0FFF};
+  return number & three_nibble_mask;
+}
+
 enum class Instructions : std::uint8_t
 {
   System = 0,
-  SkipNextInstructionEqual = 3,
-  SkipNextInstructionNotEqual = 4,
-  SkipNextInstructionEqualRegister = 5,
-  SetValueToRegister = 6,
-  AddValueToRegister = 7,
-  RegisterToRegisterArith = 8,
+  JumpAddress = 0x1,
+  SkipNextInstructionEqual = 0x3,
+  SkipNextInstructionNotEqual = 0x4,
+  SkipNextInstructionEqualRegister = 0x5,
+  SetValueToRegister = 0x6,
+  AddValueToRegister = 0x7,
+  RegisterToRegisterArith = 0x8,
 };
 
 } // namespace
 
-auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
-    -> DecodeTypes::List
+auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) -> DecodeTypes::List
 {
   const auto first_byte{instruction.at(std::to_underlying(Position::First))};
   const auto last_byte{instruction.at(std::to_underlying(Position::Last))};
@@ -85,6 +97,12 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
         }
 
         [[fallthrough]];
+      }
+    case Instructions::JumpAddress:
+      {
+        return DecodeTypes::JumpAddress{
+            .value = get_three_byte_val(instruction),
+        };
       }
     case Instructions::SkipNextInstructionEqual:
       {

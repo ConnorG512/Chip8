@@ -25,6 +25,11 @@ void Chip8::execute(DecodeTypes::List decode_list, Device &device)
           return;
         }
 
+        if constexpr (std::is_same_v<DecT, DecodeTypes::JumpAddress>)
+        {
+          device.program_counter_.set_counter(list.value);
+        }
+
         if constexpr (std::is_same_v<DecT, DecodeTypes::SkipNextInstructionEqual>)
         {
           // TODO
