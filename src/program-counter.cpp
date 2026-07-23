@@ -13,3 +13,8 @@ void Chip8::ProgramCounter::increment_program() noexcept
 {
   return current_count_;
 }
+
+void Chip8::ProgramCounter::set_counter(std::size_t offset)
+{
+  current_count_ = offset;
+}
