@@ -22,9 +22,12 @@ add_executable(chip-8
   src/app-renderer.cpp
   src/app-window.cpp
   src/decode-instruction.cpp
+  src/device.cpp
+  src/execute-instructions.cpp
   src/lua-instance.cpp
   src/main.cpp
   src/memory-buffer.cpp
+  src/program-counter.cpp
   src/screen-buffer.cpp
   src/timer.cpp
 )

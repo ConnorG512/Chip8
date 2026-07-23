@@ -22,7 +22,13 @@ public:
 
     held_value_ = val;
   }
+  
   [[nodiscard]] auto get_data() const noexcept -> T { return held_value_; }
+  
+  auto add_val(std::uint8_t value) noexcept 
+  {
+    held_value_ += value;
+  }
   auto reset() noexcept -> void { held_value_ = 0; };
 
 private:

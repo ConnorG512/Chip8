@@ -3,6 +3,7 @@
 #include "chip8-spec.hpp"
 #include "decode-instruction.hpp"
 #include "device.hpp"
+#include "execute-instructions.hpp"
 #include "lua-instance.hpp"
 #include "memory-buffer.hpp"
 // #include "register.hpp"
@@ -21,7 +22,7 @@ auto main() -> int
 {
   SDL_Init(SDL_INIT_VIDEO);
 
-  Chip8::Device device_{};
+  Chip8::Device device{Chip8::Spec::application_reserve.start};
 
   try
   {
@@ -51,8 +52,6 @@ auto main() -> int
       return EXIT_FAILURE;
     }
 
-    
-
     bool done{false};
     while (!done)
     {
@@ -65,8 +64,11 @@ auto main() -> int
         }
       }
       // Application Loop start:
-      
-      auto fetched_instruction {Chip8::decode_instruction(mem_buf.fetch_instruction(Chip8::MemBuf::AddressSection::Application, 0))};
+
+      auto fetched_instruction {Chip8::decode_instruction(mem_buf.fetch_instruction(Chip8::MemBuf::AddressSection::Application, device.program_counter_.get_current_increment()))};
+      Chip8::execute(fetched_instruction, device);
+
+      device.program_counter_.increment_program();
 
       renderer.clear_renderer();
       renderer.present();

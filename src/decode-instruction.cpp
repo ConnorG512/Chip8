@@ -57,10 +57,7 @@ enum class Instructions : std::uint8_t
 } // namespace
 
 auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
-    -> std::variant<DecodeTypes::ClearDisplay, DecodeTypes::ReturnFromSubroutine, DecodeTypes::SkipNextInstructionEqual,
-                    DecodeTypes::SkipNextInstructionNotEqual, DecodeTypes::RegisterToRegisterArith,
-                    DecodeTypes::AddValueToRegister, DecodeTypes::SetValueToRegister,
-                    DecodeTypes::SkipNextInstructionEqualRegister>
+    -> DecodeTypes::List
 {
   const auto first_byte{instruction.at(std::to_underlying(Position::First))};
   const auto last_byte{instruction.at(std::to_underlying(Position::Last))};
