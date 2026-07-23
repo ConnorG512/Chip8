@@ -83,6 +83,8 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction)
         {
           return DecodeTypes::ReturnFromSubroutine{};
         }
+
+        [[fallthrough]];
       }
     case Instructions::SkipNextInstructionEqual:
       {
