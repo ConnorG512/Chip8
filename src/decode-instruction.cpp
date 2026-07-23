@@ -79,7 +79,11 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) -> DecodeTy
   {
     default:
       {
-        throw std::runtime_error(std::format("Cannot decode given instruction! Value: {}.", instruction_found));
+        std::uint16_t address{};
+        std::memcpy(&address, instruction.data(), sizeof(instruction));
+        address = std::byteswap(address);
+
+        throw std::runtime_error(std::format("Cannot decode given instruction! Value: 0x{:04X}.\n", address));
       }
     case Instructions::System:
       {
