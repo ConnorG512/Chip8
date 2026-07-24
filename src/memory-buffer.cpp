@@ -33,7 +33,7 @@ auto get_offset(std::span<std::byte> buffer, Chip8::MemBuf::AddressSection addr_
       return std::span{buffer}.subspan(Chip8::Spec::character_reserve.start,
                                        calculate_range(Chip8::Spec::character_reserve));
     case MemBuf::AddressSection::Application:
-      return std::span{buffer}.subspan(Chip8::Spec::character_reserve.start,
+      return std::span{buffer}.subspan(Chip8::Spec::application_reserve.start,
                                        calculate_range(Chip8::Spec::application_reserve));
   };
 }
@@ -124,12 +124,10 @@ auto Chip8::MemBuf::load_app_into_buffer(const std::string &app_name) -> std::ex
   return {};
 }
 
-auto Chip8::MemBuf::fetch_instruction(AddressSection addr_section, std::size_t offset) -> std::array<std::byte, 2>
+auto Chip8::MemBuf::fetch_instruction(std::size_t offset) -> std::array<std::byte, 2>
 {
-  const auto available_range{get_offset(buf_, addr_section)};
-
   static constexpr auto following_byte{1};
-  const std::array<std::byte, 2> fetched_bytes{available_range.at(offset), available_range.at(offset + following_byte)};
+  const std::array<std::byte, 2> fetched_bytes{buf_.at(offset), buf_.at(offset + following_byte)};
 
   return fetched_bytes;
 }

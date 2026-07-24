@@ -29,6 +29,7 @@ add_executable(chip-8
   src/memory-buffer.cpp
   src/program-counter.cpp
   src/screen-buffer.cpp
+  src/texture.cpp
   src/timer.cpp
 )
 

@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <cstring>
 #include <format>
-#include <stdexcept>
+#include <print>
 #include <utility>
 
 namespace
@@ -66,6 +66,7 @@ enum class Instructions : std::uint8_t
   AddValueToRegister = 0x7,
   RegisterToRegisterArith = 0x8,
   LoadIntoIndexRegister = 0xA,
+  DrawToScreen = 0xD,
 };
 
 } // namespace
@@ -78,14 +79,6 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) -> DecodeTy
   const auto instruction_found{get_instruction(first_byte)};
   switch (static_cast<Instructions>(instruction_found))
   {
-    default:
-      {
-        std::uint16_t address{};
-        std::memcpy(&address, instruction.data(), sizeof(instruction));
-        address = std::byteswap(address);
-
-        throw std::runtime_error(std::format("Cannot decode given instruction! Value: 0x{:04X}.\n", address));
-      }
     case Instructions::System:
       {
         constexpr static std::byte clear_display_byte{0xE0};
@@ -101,7 +94,7 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) -> DecodeTy
           return DecodeTypes::ReturnFromSubroutine{};
         }
 
-        [[fallthrough]];
+        break;
       }
     case Instructions::JumpAddress:
       {
@@ -133,7 +126,7 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) -> DecodeTy
     case Instructions::SetValueToRegister:
       {
         return DecodeTypes::SetValueToRegister{
-            .value = get_nibble(first_byte),
+            .value = std::to_integer<std::uint16_t>(last_byte),
             .register_id = get_nibble(first_byte, Position::Last),
         };
       }
@@ -157,6 +150,24 @@ auto Chip8::decode_instruction(std::array<std::byte, 2> instruction) -> DecodeTy
         return DecodeTypes::LoadIntoIndexRegister{
             .value = get_three_byte_val(instruction),
         };
+      }
+    case Instructions::DrawToScreen:
+      {
+        return DecodeTypes::DrawToScreen{
+          .register_id_1 = get_nibble(first_byte, Position::Last),
+          .register_id_2 = get_nibble(last_byte, Position::First),
+          .bytes_to_draw = get_nibble(last_byte, Position::Last),
+        };
+      }
+    default:
+      {
+        std::uint16_t address{};
+        std::memcpy(&address, instruction.data(), sizeof(instruction));
+        address = std::byteswap(address);
+        
+        std::println("Cannot decode given instruction! Value: 0x{:04X}.", address);
+        break;
+        // throw std::runtime_error(std::format("Cannot decode given instruction! Value: 0x{:04X}.\n", address));
       }
   }
 }

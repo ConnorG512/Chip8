@@ -7,6 +7,8 @@
 
 #include <array>
 
+class SDL_Renderer; 
+
 namespace Chip8 {
   class Device {
     private:
@@ -14,9 +16,8 @@ namespace Chip8 {
 
     public:
       Device(std::size_t pc_start) noexcept;
-      Device() = default;
       
-      Chip8::ScrBuf screen_buffer{};
+      Chip8::ScrBuf screen_buffer_;
       Chip8::MemBuf mem_buf_{};
       
       std::array<Chip8::Register<std::uint8_t>, regular_register_count> registers_{};

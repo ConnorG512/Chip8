@@ -1,22 +1,33 @@
+#include "app-renderer.hpp"
 #include "device.hpp"
 #include "execute-instructions.hpp"
 
+#include <array>
 #include <cassert>
 #include <type_traits>
 #include <variant>
 
-void Chip8::execute(DecodeTypes::List decode_list, Device &device)
+void Chip8::execute(DecodeTypes::List decode_list, Device &device, AppRenderer &renderer)
 {
   assert(decode_list.index() != std::variant_npos);
 
   std::visit(
-      [&device](auto &&list) -> auto
+      [&device, &renderer](auto &&list) -> auto
       {
         using DecT = std::decay_t<decltype(list)>;
 
+        if constexpr (std::is_same_v<DecT, DecodeTypes::DrawToScreen>)
+        {
+          const auto reg_1{list.register_id_1};
+          const auto reg_2{list.register_id_2};
+          const auto value{list.bytes_to_draw};
+          
+          renderer.prepare_fullscreen_texture(device.screen_buffer_.create_new_screen_buffer({reg_1, reg_2}, value));
+        }
+
         if constexpr (std::is_same_v<DecT, DecodeTypes::ClearDisplay>)
         {
-          device.screen_buffer.clear_screen();
+          device.screen_buffer_.clear_buffer();
         }
 
         if constexpr (std::is_same_v<DecT, DecodeTypes::ReturnFromSubroutine>)

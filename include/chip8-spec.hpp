@@ -1,11 +1,12 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 namespace Chip8::Spec
 {
-inline constexpr auto screen_width{64};
-inline constexpr auto screen_height{32};
+inline constexpr std::uint8_t screen_width{64};
+inline constexpr std::uint8_t screen_height{32};
 
 struct MemoryPortions
 {

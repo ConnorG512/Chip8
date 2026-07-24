@@ -73,7 +73,14 @@ struct LoadIntoIndexRegister
   std::uint16_t value{0};
 };
 
-using List = std::variant<ClearDisplay, ReturnFromSubroutine, JumpAddress, SkipNextInstructionEqual,
+struct DrawToScreen
+{
+  std::uint8_t register_id_1{0};
+  std::uint8_t register_id_2{0};
+  std::uint8_t bytes_to_draw{0};
+};
+
+using List = std::variant<ClearDisplay, DrawToScreen, ReturnFromSubroutine, JumpAddress, SkipNextInstructionEqual,
                           SkipNextInstructionNotEqual, SkipNextInstructionEqualRegister, SetValueToRegister,
                           AddValueToRegister, RegisterToRegisterArith, LoadIntoIndexRegister>;
 

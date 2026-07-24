@@ -33,7 +33,7 @@ public:
     INVALID_PATH,
   };
   [[nodiscard]] auto load_app_into_buffer(const std::string &app_name) -> std::expected<void, LoadAppErr>;
-  [[nodiscard]] auto fetch_instruction(AddressSection addr_section, std::size_t offset) -> std::array<std::byte, 2>;
+  [[nodiscard]] auto fetch_instruction(std::size_t offset) -> std::array<std::byte, 2>;
   
 
   static constexpr auto max_memory_buffer_size{4096};

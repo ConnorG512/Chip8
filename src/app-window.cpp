@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_video.h>
 #include <cassert>
 #include <format>
 #include <stdexcept>
@@ -23,4 +24,20 @@ auto Chip8::AppWindow::window_ref() -> SDL_Window &
 {
   assert(window_.get() != nullptr);
   return *window_;
+}
+
+[[nodiscard]] auto Chip8::AppWindow::get_window_dimensions() noexcept
+    -> std::expected<std::pair<std::uint32_t, std::uint32_t>, std::string>
+{
+  static_assert(sizeof(int) == sizeof(std::uint32_t), "Int should be the same size as std::uint32_t (32bit)");
+
+  int window_x{};
+  int window_y{};
+
+  if (!SDL_GetWindowSize(window_.get(), &window_x, &window_y))
+  {
+    return std::unexpected(std::format("Failed SDL_GetWindowSize! Error: {}", SDL_GetError()));
+  }
+
+  return std::pair{window_x, window_y};
 }

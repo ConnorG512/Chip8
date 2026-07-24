@@ -3,7 +3,10 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
 #include <cstdint>
+#include <expected>
 #include <memory>
+#include <string>
+#include <utility>
 
 namespace Chip8
 {
@@ -18,7 +21,9 @@ public:
 
   AppWindow(const char *name, Dimensions xy);
 
-  auto window_ref() -> SDL_Window &;
+  [[nodiscard]] auto window_ref() -> SDL_Window &;
+  [[nodiscard]] auto get_window_dimensions() noexcept
+      -> std::expected<std::pair<std::uint32_t, std::uint32_t>, std::string>;
 
 private:
   static constexpr std::pair<std::int32_t, std::int32_t> xy_{1280, 720};
