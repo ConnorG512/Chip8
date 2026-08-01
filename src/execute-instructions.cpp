@@ -43,7 +43,12 @@ void Chip8::execute(DecodeTypes::List decode_list, Device &device, AppRenderer &
 
         if constexpr (std::is_same_v<DecT, DecodeTypes::SkipNextInstructionEqual>)
         {
-          // TODO
+          const auto register_id{list.register_id};
+
+          if(device.registers_.at(register_id).get_data() == list.value)
+          {
+            device.program_counter_.increment_program();
+          }
           return;
         }
 
