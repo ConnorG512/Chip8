@@ -18,11 +18,12 @@ void Chip8::execute(DecodeTypes::List decode_list, Device &device, AppRenderer &
 
         if constexpr (std::is_same_v<DecT, DecodeTypes::DrawToScreen>)
         {
-          const auto reg_1{list.register_id_1};
-          const auto reg_2{list.register_id_2};
+          const auto reg_1_value{device.registers_.at(list.register_id_1).get_data()};
+          const auto reg_2_value{device.registers_.at(list.register_id_2).get_data()};
           const auto value{list.bytes_to_draw};
-          
-          renderer.prepare_fullscreen_texture(device.screen_buffer_.create_new_screen_buffer({reg_1, reg_2}, value));
+
+          renderer.prepare_fullscreen_texture(
+              device.screen_buffer_.create_new_screen_buffer({reg_1_value, reg_2_value}, value));
         }
 
         if constexpr (std::is_same_v<DecT, DecodeTypes::ClearDisplay>)
@@ -45,7 +46,7 @@ void Chip8::execute(DecodeTypes::List decode_list, Device &device, AppRenderer &
         {
           const auto register_id{list.register_id};
 
-          if(device.registers_.at(register_id).get_data() == list.value)
+          if (device.registers_.at(register_id).get_data() == list.value)
           {
             device.program_counter_.increment_program();
           }
