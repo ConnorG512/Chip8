@@ -6,7 +6,6 @@
 #include "execute-instructions.hpp"
 #include "lua-instance.hpp"
 #include "memory-buffer.hpp"
-#include "texture.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
@@ -51,10 +50,6 @@ auto main() -> int
       std::cerr << "Failed to load default app, Aborting.\n";
       return EXIT_FAILURE;
     }
-
-    Chip8::Texture screen_texture{renderer.get_sdl_renderer(),
-                                  SDL_TEXTUREACCESS_STREAMING,
-                                  {Chip8::Spec::screen_width, Chip8::Spec::screen_height}};
 
     bool done{false};
     while (!done)
