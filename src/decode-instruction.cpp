@@ -13,9 +13,10 @@
 
 namespace
 {
+constexpr auto one_nibble{4};
+
 [[nodiscard]] auto get_instruction(std::byte instruction_byte) -> std::uint8_t
 {
-  constexpr static auto one_nibble{4};
   return std::to_integer<std::uint8_t>(instruction_byte >> one_nibble);
 }
 
@@ -34,7 +35,7 @@ enum class Position : std::uint8_t
   {
     case Position::First:
       {
-        return std::to_integer<std::uint8_t>(register_byte & first_nibble_mask);
+        return std::to_integer<std::uint8_t>(register_byte & first_nibble_mask >> one_nibble);
       }
     case Position::Last:
       {
