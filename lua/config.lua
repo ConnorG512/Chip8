@@ -7,4 +7,4 @@ window_scale = 18;
 -- Interpreter clock speed.
 speed = 7000;
 
-app_name = "test-1";
+app_name = "test-1-basic-loop";
