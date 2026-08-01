@@ -69,10 +69,10 @@ auto main() -> int
       auto fetched_instruction{
           Chip8::decode_instruction(mem_buf.fetch_instruction(device.program_counter_.get_current_increment()))};
 
+      device.program_counter_.increment_program();
+      
       Chip8::execute(fetched_instruction, device, renderer);
       
-      device.program_counter_.increment_program();
-
       renderer.present();
       // Application Loop end:
 
