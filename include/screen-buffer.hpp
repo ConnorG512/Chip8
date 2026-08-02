@@ -1,6 +1,7 @@
 #pragma once
 
 #include "chip8-spec.hpp"
+#include "register.hpp"
 
 #include <SDL3/SDL_render.h>
 #include <array>
@@ -10,13 +11,23 @@
 
 namespace Chip8
 {
+class ScrBuf;
+} // namespace Chip8
+
+namespace Chip8
+{
 class ScrBuf
 {
 public:
   void flip_pixels(std::span<const std::uint16_t> offsets);
   void clear_buffer() noexcept;
 
-  [[nodiscard]] auto create_new_screen_buffer(std::pair<std::uint8_t, std::uint8_t> pos_xy, std::uint8_t draw_num)
+  struct PixelPosition
+  {
+    std::uint8_t x{};
+    std::uint8_t y{};
+  };
+  [[nodiscard]] auto create_new_screen_buffer(PixelPosition pos_xy, std::span<const std::byte> sprite_data)
       -> std::span<const std::byte>;
 
 private:

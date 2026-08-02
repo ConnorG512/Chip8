@@ -25,8 +25,9 @@ void Chip8::execute(DecodeTypes::List decode_list, Device &device, AppRenderer &
           const auto reg_2_value{device.registers_.at(list.register_id_2).get_data()};
           const auto value{list.bytes_to_draw};
 
-          renderer.prepare_fullscreen_texture(
-              device.screen_buffer_.create_new_screen_buffer({reg_1_value, reg_2_value}, value));
+          renderer.prepare_fullscreen_texture(device.screen_buffer_.create_new_screen_buffer(
+              {.x = reg_1_value, .y = reg_2_value},
+              device.mem_buf_.fetch_sprite_data(device.index_register_.get_data(), value)));
         }
 
         if constexpr (std::is_same_v<DecT, DecodeTypes::ClearDisplay>)

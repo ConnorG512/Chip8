@@ -8,6 +8,8 @@ namespace Chip8::Spec
 inline constexpr std::uint8_t screen_width{64};
 inline constexpr std::uint8_t screen_height{32};
 
+inline constexpr std::uint8_t max_pixel_row_len{8};
+
 struct MemoryPortions
 {
   std::size_t start{0};

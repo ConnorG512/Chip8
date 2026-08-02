@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <expected>
+#include <span>
 #include <string>
 
 namespace Chip8
@@ -34,7 +35,8 @@ public:
   };
   [[nodiscard]] auto load_app_into_buffer(const std::string &app_name) -> std::expected<void, LoadAppErr>;
   [[nodiscard]] auto fetch_instruction(std::size_t offset) -> std::array<std::byte, 2>;
-  
+  [[nodiscard]] auto fetch_sprite_data(std::size_t offset, std::uint8_t buffer_len)
+      -> std::span<const std::byte>;
 
   static constexpr auto max_memory_buffer_size{4096};
 

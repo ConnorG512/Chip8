@@ -33,21 +33,13 @@ auto main() -> int
         {.width = Chip8::Spec::screen_width * window_scale, .height = Chip8::Spec::screen_height * window_scale}};
 
     Chip8::AppRenderer renderer{window.window_ref(), window.get_window_dimensions().value()};
-    Chip8::MemBuf mem_buf{};
 
     Chip8::Device device{Chip8::Spec::application_reserve.start};
-
-    const auto result = mem_buf.load_app_into_buffer(std::get<std::string>(lua_instance.read_config("app_name")))
-                            .or_else(
-                                [&](const Chip8::MemBuf::LoadAppErr &err) -> auto
-                                {
-                                  std::cerr << "Failed to load app from Lua string. Error: "
-                                            << static_cast<std::uint32_t>(std::to_underlying(err)) << '\n';
-                                  return mem_buf.load_app_into_buffer("test-1");
-                                });
-    if (!result.has_value())
+    
+    const auto result = device.mem_buf_.load_app_into_buffer(std::get<std::string>(lua_instance.read_config("app_name")));
+    if(!result.has_value())
     {
-      std::cerr << "Failed to load default app, Aborting.\n";
+      std::cerr << "Failed to load file!\n";
       return EXIT_FAILURE;
     }
 
@@ -67,7 +59,7 @@ auto main() -> int
       renderer.clear_renderer();
       
       auto fetched_instruction{
-          Chip8::decode_instruction(mem_buf.fetch_instruction(device.program_counter_.get_current_increment()))};
+          Chip8::decode_instruction(device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment()))};
 
       device.program_counter_.increment_program();
       

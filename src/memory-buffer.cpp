@@ -131,3 +131,12 @@ auto Chip8::MemBuf::fetch_instruction(std::size_t offset) -> std::array<std::byt
 
   return fetched_bytes;
 }
+
+auto Chip8::MemBuf::fetch_sprite_data(std::size_t offset, std::uint8_t buffer_len) -> std::span<const std::byte>
+{
+  static constexpr auto max_sprite_buffer_len {16};
+  assert(buffer_len <= max_sprite_buffer_len && "Given \"buffer_len\" exceeds max!");
+  assert(offset + buffer_len <= buf_.size() && "Attempted to read out of memory bounds!");
+
+  return std::span{buf_}.subspan(offset, buffer_len);
+}

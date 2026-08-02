@@ -4,73 +4,77 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <ranges>
 #include <span>
-#include <vector>
+#include <strings.h>
 
 namespace
 {
-struct DrawPosition
-{
-  std::uint8_t starting_offset{0};
-  std::uint8_t increments{0};
-};
+using ScrBuf = Chip8::ScrBuf;
 
-[[nodiscard]] auto calculate_offsets(DrawPosition draw_position) -> std::vector<std::uint16_t>
+[[nodiscard]] auto set_starting_pixel_position(ScrBuf::PixelPosition pos_xy) -> std::uint16_t
 {
-  assert(draw_position.increments > 0 && draw_position.starting_offset >= 0);
+  const auto wrapped_x{pos_xy.x % Chip8::Spec::screen_width};
+  const auto wrapped_y{pos_xy.y % Chip8::Spec::screen_height};
 
-  static constexpr auto max_sprite_height{15};
-  static constexpr std::array<std::uint16_t, max_sprite_height> pixel_offsets = [] consteval -> auto
+  return (wrapped_y * Chip8::Spec::screen_width) + wrapped_x;
+}
+
+auto convert_bits_to_byte_array(std::byte bits) -> std::array<std::byte, Chip8::Spec::max_pixel_row_len>
+{
+  std::array<std::byte, Chip8::Spec::max_pixel_row_len> pixel_values{};
+
+  for (const auto &[index, pixel] : pixel_values | std::views::enumerate)
   {
-    std::array<std::uint16_t, max_sprite_height> offsets{};
-    std::ranges::transform(offsets | std::views::enumerate, std::ranges::begin(offsets),
-                           [](const auto index_offset_pair) -> auto
-                           {
-                             const auto [index, offset] = index_offset_pair;
-                             return offset = Chip8::Spec::screen_width * index;
-                           });
-    return offsets;
-  }();
+    const auto current_bit{index};
+    const bool is_on_bit{((bits >> (7 - current_bit)) & std::byte{0b1}) != std::byte{0}};
 
-  const auto max_increments{draw_position.increments};
-  std::vector<std::uint16_t> increments(max_increments);
-  std::ranges::transform(pixel_offsets | std::views::take(max_increments), std::ranges::begin(increments),
-                         [starting_offset = draw_position.starting_offset](auto offset) -> auto
-                         { return offset + starting_offset; });
+    if (is_on_bit)
+    {
+      static constexpr auto white_pixel{0xFF};
+      pixel ^= std::byte{white_pixel};
+    }
+  }
+  return pixel_values;
+}
 
-  return increments;
+auto paint_pixels(std::span<std::uint32_t, Chip8::Spec::max_pixel_row_len> pixel_row,
+                  std::span<const std::byte> pixel_values)
+{
+  assert(!pixel_row.empty() && !pixel_values.empty());
+
+  for (const auto &&[scr_buf, pixel_val] : std::views::zip(pixel_row, pixel_values))
+  {
+    static constexpr auto on_pixel{0xFF};
+    static constexpr auto flip_value{0xFFFFFFFF};
+
+    if (pixel_val == std::byte{on_pixel})
+    {
+      scr_buf ^= flip_value;
+    }
+  }
 }
 } // namespace
 
-void Chip8::ScrBuf::flip_pixels(std::span<const std::uint16_t> offsets)
-{
-  if (offsets.empty())
-  {
-    return;
-  }
-
-  static constexpr auto flip_value{0xFFFFFFFF};
-  for (auto offset : offsets)
-  {
-    assert(offset >= 0);
-    buf_.at(offset) ^= flip_value;
-  }
-}
-
 void Chip8::ScrBuf::clear_buffer() noexcept
 {
-  static constexpr auto clear_value{0x00000000};
-  std::ranges::fill(buf_, clear_value);
+  static constexpr auto black_pixel{0x00000000};
+  std::ranges::fill(buf_, black_pixel);
 }
 
-auto Chip8::ScrBuf::create_new_screen_buffer(std::pair<std::uint8_t, std::uint8_t> pos_xy, std::uint8_t draw_num)
+auto Chip8::ScrBuf::create_new_screen_buffer(PixelPosition pos_xy, std::span<const std::byte> sprite_data)
     -> std::span<const std::byte>
 {
-  const std::uint8_t starting_point = (pos_xy.second * Chip8::Spec::screen_width) + pos_xy.first;
-  const auto pixels_to_write{calculate_offsets({.starting_offset = starting_point, .increments = draw_num})};
-  flip_pixels(pixels_to_write);
+  const std::uint16_t starting_position{set_starting_pixel_position(pos_xy)};
+
+  for (const auto [row_index, pixel] : sprite_data | std::views::enumerate)
+  {
+    const auto current_position{starting_position + (row_index * Chip8::Spec::screen_width)};
+    const std::array<std::byte, Chip8::Spec::max_pixel_row_len> pixels_to_paint{convert_bits_to_byte_array(pixel)};
+    paint_pixels(std::span{buf_}.subspan(current_position).first<Chip8::Spec::max_pixel_row_len>(), pixels_to_paint);
+  }
 
   return std::as_bytes(std::span(buf_));
 }
