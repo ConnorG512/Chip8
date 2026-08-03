@@ -18,19 +18,28 @@ elseif(NOT CLANG_TIDY_EXEC)
   message(STATUS "Clang tidy could not be found! Cannot run analysis.")
 endif()
 
-add_executable(chip-8 
+# Source Lists: 
+set(SOURCE_CORE
   src/app-renderer.cpp
   src/app-window.cpp
   src/decode-instruction.cpp
   src/device.cpp
   src/execute-instructions.cpp
-  src/lua-instance.cpp
   src/main.cpp
   src/memory-buffer.cpp
   src/program-counter.cpp
   src/screen-buffer.cpp
   src/texture.cpp
   src/timer.cpp
+)
+
+set(SOURCE_LUA
+  src/lua/lua.cpp
+)
+
+add_executable(chip-8 
+  ${SOURCE_CORE}
+  ${SOURCE_LUA}
 )
 
 find_package(SDL3 REQUIRED)

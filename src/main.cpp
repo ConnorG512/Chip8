@@ -4,7 +4,7 @@
 #include "decode-instruction.hpp"
 #include "device.hpp"
 #include "execute-instructions.hpp"
-#include "lua-instance.hpp"
+#include "lua/lua.hpp"
 #include "memory-buffer.hpp"
 
 #include <SDL3/SDL_events.h>
@@ -23,10 +23,10 @@ auto main() -> int
 
   try
   {
-    Chip8::LuaInstance lua_instance{};
+    Lua::Engine lua{};
+    lua.execute_file("config.lua");
 
-    const std::int32_t window_scale{
-        static_cast<std::int32_t>(std::get<double>(lua_instance.read_config("window_scale")))};
+    const auto window_scale{lua.get<std::int32_t>("window_scale")};
 
     Chip8::AppWindow window{
         "Chip8",
@@ -35,9 +35,9 @@ auto main() -> int
     Chip8::AppRenderer renderer{window.window_ref(), window.get_window_dimensions().value()};
 
     Chip8::Device device{Chip8::Spec::application_reserve.start};
-    
-    const auto result = device.mem_buf_.load_app_into_buffer(std::get<std::string>(lua_instance.read_config("app_name")));
-    if(!result.has_value())
+
+    const auto result = device.mem_buf_.load_app_into_buffer(lua.get<std::string>("app_name"));
+    if (!result.has_value())
     {
       std::cerr << "Failed to load file!\n";
       return EXIT_FAILURE;
@@ -57,14 +57,14 @@ auto main() -> int
       // Application Loop start:
 
       renderer.clear_renderer();
-      
-      auto fetched_instruction{
-          Chip8::decode_instruction(device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment()))};
+
+      auto fetched_instruction{Chip8::decode_instruction(
+          device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment()))};
 
       device.program_counter_.increment_program();
-      
+
       Chip8::execute(fetched_instruction, device, renderer);
-      
+
       renderer.present();
       // Application Loop end:
 
