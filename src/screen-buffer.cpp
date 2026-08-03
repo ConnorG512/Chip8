@@ -42,12 +42,15 @@ auto convert_bits_to_byte_array(std::byte bits) -> std::array<std::byte, Chip8::
   for (const auto &[index, pixel] : pixel_values | std::views::enumerate)
   {
     const auto current_bit{index};
-    const bool is_on_bit{((bits >> (7 - current_bit)) & std::byte{0b1}) != std::byte{0}};
+    static constexpr std::byte single_bitmask{0b1};
+    static constexpr std::byte zero{0x00};
+    static constexpr auto most_significant_bit {7};
+    const bool is_on_bit{((bits >> (most_significant_bit - current_bit)) & single_bitmask) != zero};
 
     if (is_on_bit)
     {
-      static constexpr auto white_pixel{0xFF};
-      pixel ^= std::byte{white_pixel};
+      static constexpr auto flip_val{0xFF};
+      pixel ^= std::byte{flip_val};
     }
   }
   return pixel_values;
@@ -60,10 +63,10 @@ auto paint_pixels(std::span<std::uint32_t, Chip8::Spec::max_pixel_row_len> pixel
 
   for (const auto &&[scr_buf, pixel_val] : std::views::zip(pixel_row, pixel_values))
   {
-    static constexpr auto on_pixel{0xFF};
+    static constexpr std::byte white{0xFF};
     static constexpr auto flip_value{0xFFFFFFFF};
 
-    if (pixel_val == std::byte{on_pixel})
+    if (pixel_val == white)
     {
       scr_buf ^= flip_value;
     }
