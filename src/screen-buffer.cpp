@@ -24,6 +24,19 @@ using ScrBuf = Chip8::ScrBuf;
 
 auto convert_bits_to_byte_array(std::byte bits) -> std::array<std::byte, Chip8::Spec::max_pixel_row_len>
 {
+  static constexpr std::byte full_row{0b11111111};
+  if (bits == full_row)
+  {
+    static constexpr std::byte white_pixel{0xFF};
+    return {white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel};
+  }
+
+  static constexpr std::byte empty_row{0b00000000};
+  if (bits == empty_row)
+  {
+    return {};
+  }
+
   std::array<std::byte, Chip8::Spec::max_pixel_row_len> pixel_values{};
 
   for (const auto &[index, pixel] : pixel_values | std::views::enumerate)
