@@ -25,6 +25,7 @@ set(SOURCE_CORE
   src/decode-instruction.cpp
   src/device.cpp
   src/execute-instructions.cpp
+  src/instruction-packet.cpp
   src/main.cpp
   src/memory-buffer.cpp
   src/program-counter.cpp

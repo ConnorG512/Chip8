@@ -1,12 +1,11 @@
 #pragma once
 
 #include "decode-types.hpp"
-
-#include <array>
-#include <cstddef>
+#include "instruction-packet.hpp"
 
 namespace Chip8
 {
-[[nodiscard]] auto decode_instruction(std::array<std::byte, 2> instruction)
+
+[[nodiscard]] auto decode_instruction(InstructionPacket packet)
     -> DecodeTypes::List;
 }

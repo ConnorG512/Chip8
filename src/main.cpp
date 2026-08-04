@@ -59,7 +59,7 @@ auto main() -> int
       renderer.clear_renderer();
 
       auto fetched_instruction{Chip8::decode_instruction(
-          device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment()))};
+          {device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment())})};
 
       device.program_counter_.increment_program();
 

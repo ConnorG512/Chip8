@@ -124,17 +124,15 @@ auto Chip8::MemBuf::load_app_into_buffer(const std::string &app_name) -> std::ex
   return {};
 }
 
-auto Chip8::MemBuf::fetch_instruction(std::size_t offset) -> std::array<std::byte, 2>
+auto Chip8::MemBuf::fetch_instruction(std::size_t offset) -> InstructionPacket
 {
-  static constexpr auto following_byte{1};
-  const std::array<std::byte, 2> fetched_bytes{buf_.at(offset), buf_.at(offset + following_byte)};
-
-  return fetched_bytes;
+  static constexpr auto next{1};
+  return InstructionPacket({buf_.at(offset), buf_.at(offset + next)});
 }
 
 auto Chip8::MemBuf::fetch_sprite_data(std::size_t offset, std::uint8_t buffer_len) -> std::span<const std::byte>
 {
-  static constexpr auto max_sprite_buffer_len {16};
+  static constexpr auto max_sprite_buffer_len{16};
   assert(buffer_len <= max_sprite_buffer_len && "Given \"buffer_len\" exceeds max!");
   assert(offset + buffer_len <= buf_.size() && "Attempted to read out of memory bounds!");
 

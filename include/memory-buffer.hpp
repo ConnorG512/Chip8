@@ -1,5 +1,7 @@
 #pragma once
 
+#include "instruction-packet.hpp"
+
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -34,7 +36,7 @@ public:
     INVALID_PATH,
   };
   [[nodiscard]] auto load_app_into_buffer(const std::string &app_name) -> std::expected<void, LoadAppErr>;
-  [[nodiscard]] auto fetch_instruction(std::size_t offset) -> std::array<std::byte, 2>;
+  [[nodiscard]] auto fetch_instruction(std::size_t offset) -> InstructionPacket;
   [[nodiscard]] auto fetch_sprite_data(std::size_t offset, std::uint8_t buffer_len)
       -> std::span<const std::byte>;
 
