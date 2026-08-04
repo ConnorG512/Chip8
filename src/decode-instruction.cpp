@@ -115,11 +115,7 @@ auto Chip8::decode_instruction(InstructionPacket packet) -> DecodeTypes::List
       }
     default:
       {
-        std::uint16_t address{};
-        std::memcpy(&address, packet.arr().data(), sizeof(packet.arr()));
-        address = std::byteswap(address);
-
-        std::println("Cannot decode given instruction! Value: 0x{:04X}.", address);
+        std::println("Cannot decode given instruction! Value: 0x{:04X}.", instruction_found);
         break;
         // throw std::runtime_error(std::format("Cannot decode given instruction! Value: 0x{:04X}.\n", address));
       }
