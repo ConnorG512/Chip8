@@ -11,8 +11,6 @@ class InstructionPacket
 public:
   explicit InstructionPacket(std::array<std::byte, 2> bytes) noexcept;
 
-  [[nodiscard]] auto arr() const noexcept -> std::array<std::byte, 2>;
-
   enum class Position : std::uint8_t
   {
     First,

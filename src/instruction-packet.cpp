@@ -25,8 +25,6 @@ constexpr auto single_nibble_shift{4};
 }
 } // namespace
 
-auto Chip8::InstructionPacket::arr() const noexcept -> std::array<std::byte, 2> { return {first_byte_, second_byte_}; }
-
 auto Chip8::InstructionPacket::nibble(PositionProperties properties) const noexcept -> std::uint8_t
 {
   const bool is_first_nibble{properties.nibble == Position::First};
