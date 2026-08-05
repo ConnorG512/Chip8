@@ -24,6 +24,7 @@ set(SOURCE_CORE
   src/app-window.cpp
   src/decode-instruction.cpp
   src/device.cpp
+  src/event-handler.cpp
   src/execute-instructions.cpp
   src/instruction-packet.cpp
   src/main.cpp

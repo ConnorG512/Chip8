@@ -3,6 +3,7 @@
 #include "chip8-spec.hpp"
 #include "decode-instruction.hpp"
 #include "device.hpp"
+#include "event-handler.hpp"
 #include "execute-instructions.hpp"
 #include "lua/lua.hpp"
 #include "memory-buffer.hpp"
@@ -15,6 +16,7 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <utility>
 
 auto main() -> int
@@ -46,12 +48,25 @@ auto main() -> int
     bool done{false};
     while (!done)
     {
-      SDL_Event event{};
-      while (SDL_PollEvent(&event))
+      if (const auto poll = Chip8::Event::poll(); poll.has_value())
       {
-        if (event.type == SDL_EVENT_QUIT)
+        using EventList = Chip8::Event::List;
+
+        switch (poll.value())
         {
-          done = true;
+          case EventList::Quit:
+            {
+              done = true;
+              break;
+            }
+          case EventList::Key_Down:
+            {
+              break;
+            }
+          default:
+            {
+              throw std::runtime_error("Invalid Event!");
+            }
         }
       }
       // Application Loop start:
