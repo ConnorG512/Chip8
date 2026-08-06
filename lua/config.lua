@@ -4,6 +4,8 @@
 -- Adjust to comfortable window scale.
 window_scale = 18;
 
+-- Application refresh rate, measured in ms.
+refresh_rate = 16;
 -- Interpreter clock speed.
 speed = 7000;
 
