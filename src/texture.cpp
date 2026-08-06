@@ -3,6 +3,7 @@
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
 #include <cassert>
 #include <cstdint>
 #include <cstring>
@@ -14,6 +15,7 @@ Chip8::Texture::Texture(SDL_Renderer &renderer, SDL_TextureAccess texture_access
                                  dimensions_wh.second),
                &SDL_DestroyTexture}
 {
+  SDL_SetTextureScaleMode(texture_.get(), SDL_SCALEMODE_NEAREST);
 }
 
 auto Chip8::Texture::update_texture(std::span<const std::byte> buffer) -> SDL_Texture&
