@@ -76,6 +76,10 @@ target_include_directories(chip-8 PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
+target_compile_options(chip-8 PRIVATE 
+  $<$<CONFIG:Debug>:-fno-inline>
+)
+
 add_custom_command(
   TARGET chip-8 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
