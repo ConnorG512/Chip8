@@ -28,9 +28,9 @@ auto main() -> int
     Lua::Engine lua{};
     lua.execute_file("config.lua");
 
-    const auto screen_refresh_rate {lua.get<std::uint32_t>("refresh_rate")};
+    const auto screen_refresh_rate {lua.get<std::uint32_t>("config.refresh_rate")};
 
-    const auto window_scale{lua.get<std::int32_t>("window_scale")};
+    const auto window_scale{lua.get<std::int32_t>("config.window_scale")};
 
     Chip8::AppWindow window{
         "Chip8",
@@ -40,7 +40,7 @@ auto main() -> int
 
     Chip8::Device device{Chip8::Spec::application_reserve.start};
 
-    const auto result = device.mem_buf_.load_app_into_buffer(lua.get<std::string>("app_name"));
+    const auto result = device.mem_buf_.load_app_into_buffer(lua.get<std::string>("config.app_name"));
     if (!result.has_value())
     {
       std::cerr << "Failed to load file!\n";
