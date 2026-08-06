@@ -47,6 +47,8 @@ auto main() -> int
       return EXIT_FAILURE;
     }
 
+    renderer.clear_renderer();
+    
     bool done{false};
     while (!done)
     {
@@ -73,7 +75,6 @@ auto main() -> int
       }
       // Application Loop start:
 
-      renderer.clear_renderer();
 
       auto fetched_instruction{Chip8::decode_instruction(
           {device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment())})};
