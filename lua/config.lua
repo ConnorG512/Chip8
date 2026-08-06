@@ -6,7 +6,5 @@ window_scale = 18;
 
 -- Application refresh rate, measured in ms.
 refresh_rate = 16;
--- Interpreter clock speed.
-speed = 7000;
 
 app_name = "test-1-basic-loop";
