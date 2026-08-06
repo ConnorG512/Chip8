@@ -28,6 +28,8 @@ auto main() -> int
     Lua::Engine lua{};
     lua.execute_file("config.lua");
 
+    const auto screen_refresh_rate {lua.get<std::uint32_t>("refresh_rate")};
+
     const auto window_scale{lua.get<std::int32_t>("window_scale")};
 
     Chip8::AppWindow window{
@@ -83,8 +85,7 @@ auto main() -> int
       renderer.present();
       // Application Loop end:
 
-      static constexpr auto sixty_fps{16};
-      SDL_Delay(sixty_fps);
+      SDL_Delay(screen_refresh_rate);
     }
   }
   catch (std::exception &e)
