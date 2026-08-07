@@ -6,10 +6,16 @@
 
 namespace Chip8::Event
 {
-enum class List : std::uint16_t {
+enum class List : std::uint16_t
+{
   Quit = SDL_EVENT_QUIT,
   Key_Down = SDL_EVENT_KEY_DOWN,
 };
-
 [[nodiscard]] auto poll() noexcept -> std::optional<List>;
-}
+
+enum class ScanCode : std::uint8_t
+{
+  Escape = SDL_SCANCODE_ESCAPE,
+};
+[[nodiscard]] auto get_keypress() noexcept -> std::optional<ScanCode>;
+} // namespace Chip8::Event

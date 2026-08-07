@@ -28,7 +28,7 @@ auto main() -> int
     Lua::Engine lua{};
     lua.execute_file("config.lua");
 
-    const auto screen_refresh_rate {lua.get<std::uint32_t>("config.refresh_rate")};
+    const auto screen_refresh_rate{lua.get<std::uint32_t>("config.refresh_rate")};
 
     const auto window_scale{lua.get<std::int32_t>("config.window_scale")};
 
@@ -48,7 +48,7 @@ auto main() -> int
     }
 
     renderer.clear_renderer();
-    
+
     bool done{false};
     while (!done)
     {
@@ -65,6 +65,18 @@ auto main() -> int
             }
           case EventList::Key_Down:
             {
+              if (const auto pressed_key = Chip8::Event::get_keypress(); pressed_key.has_value())
+              {
+                using ScanCode = Chip8::Event::ScanCode;
+                switch (pressed_key.value())
+                {
+                  case ScanCode::Escape:
+                    {
+                      done = true;
+                    }
+                }
+              }
+
               break;
             }
           default:
@@ -74,7 +86,6 @@ auto main() -> int
         }
       }
       // Application Loop start:
-
 
       auto fetched_instruction{Chip8::decode_instruction(
           {device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment())})};
