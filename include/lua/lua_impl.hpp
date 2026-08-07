@@ -12,6 +12,7 @@
 #include <ranges>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace Lua::Impl
@@ -24,7 +25,14 @@ template <LuaType T> [[nodiscard]] auto get_val(lua_State *lua) -> T
 
   if constexpr (LuaInt<T> || LuaFloat<T>)
   {
-    return static_cast<T>(lua_tonumber(lua, top_of_stack));
+    const auto final_val{lua_tonumber(lua, top_of_stack)};
+    if constexpr(std::is_unsigned_v<T>)
+    {
+      static constexpr auto minimum_unsigned_value{0};
+      assert(final_val >= minimum_unsigned_value && "Value must be at least 0 for unsigned integer!");
+      return final_val;
+    }
+    return final_val;
   }
   else if constexpr (std::same_as<T, std::string>)
   {
