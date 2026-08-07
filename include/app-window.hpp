@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
+#include <cassert>
 #include <cstdint>
 #include <expected>
 #include <memory>
@@ -19,7 +20,17 @@ public:
     std::int32_t height{};
   };
 
-  AppWindow(const char *name, Dimensions xy);
+  struct WindowTitle
+  {
+    const char *name{nullptr};
+
+    explicit WindowTitle(const char *title) : name{title}
+    {
+      assert(title != nullptr && "Window title should not be nullptr!");
+    }
+  };
+
+  AppWindow(WindowTitle title, Dimensions dim_xy);
 
   [[nodiscard]] auto window_ref() -> SDL_Window &;
   [[nodiscard]] auto get_window_dimensions() noexcept

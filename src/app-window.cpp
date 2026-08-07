@@ -7,12 +7,20 @@
 #include <format>
 #include <stdexcept>
 
-Chip8::AppWindow::AppWindow(const char *name, Dimensions dim_xy)
-    : window_{SDL_CreateWindow(name, dim_xy.width, dim_xy.height, SDL_WINDOW_OPENGL), &SDL_DestroyWindow}
+namespace
 {
-  assert(name != nullptr);
-  assert(dim_xy.width > 0);
-  assert(dim_xy.height > 0);
+constexpr auto minimum_window_size{1};
+constexpr const char *const window_size_assert_message{
+    "Window size in both X and Y dimensions must at least be the value of 1!"};
+} // namespace
+
+Chip8::AppWindow::AppWindow(WindowTitle title, Dimensions dim_xy)
+    : window_{SDL_CreateWindow(title.name, dim_xy.width, dim_xy.height, SDL_WINDOW_OPENGL), &SDL_DestroyWindow}
+{
+  for (auto dim : {dim_xy.width, dim_xy.height})
+  {
+    assert(dim >= minimum_window_size && window_size_assert_message);
+  }
 
   if (window_ == nullptr) [[unlikely]]
   {
@@ -31,8 +39,8 @@ auto Chip8::AppWindow::window_ref() -> SDL_Window &
 {
   static_assert(sizeof(int) == sizeof(std::uint32_t), "Int should be the same size as std::uint32_t (32bit)");
 
-  int window_x{};
-  int window_y{};
+  std::int32_t window_x{};
+  std::int32_t window_y{};
 
   if (!SDL_GetWindowSize(window_.get(), &window_x, &window_y))
   {

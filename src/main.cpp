@@ -33,7 +33,7 @@ auto main() -> int
     const auto window_scale{lua.get<std::int32_t>("config.window_scale")};
 
     Chip8::AppWindow window{
-        "Chip8",
+        Chip8::AppWindow::WindowTitle{"Chip8"},
         {.width = Chip8::Spec::screen_width * window_scale, .height = Chip8::Spec::screen_height * window_scale}};
 
     Chip8::AppRenderer renderer{window.window_ref(), window.get_window_dimensions().value()};
