@@ -4,24 +4,28 @@
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
 #include <cassert>
+#include <expected>
 #include <format>
+#include <memory>
 #include <stdexcept>
 
 namespace
 {
-constexpr auto minimum_window_size{1};
-constexpr const char *const window_size_assert_message{
-    "Window size in both X and Y dimensions must at least be the value of 1!"};
+using AppWindow = Chip8::AppWindow;
+[[nodiscard]] auto create_sdl_window(AppWindow::WindowTitle title, AppWindow::WindowWH win_wh)
+    -> std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>
+{
+  const auto window_width{static_cast<std::int32_t>(win_wh.width)};
+  const auto window_height{static_cast<std::int32_t>(win_wh.height)};
+
+  auto *created_window{SDL_CreateWindow(title.name, window_width, window_height, SDL_WINDOW_OPENGL)};
+  return {created_window, &SDL_DestroyWindow};
+}
 } // namespace
 
-Chip8::AppWindow::AppWindow(WindowTitle title, Dimensions dim_xy)
-    : window_{SDL_CreateWindow(title.name, dim_xy.width, dim_xy.height, SDL_WINDOW_OPENGL), &SDL_DestroyWindow}
+Chip8::AppWindow::AppWindow(WindowTitle title, WindowWH win_wh)
+    : window_{create_sdl_window(title, win_wh)}
 {
-  for (auto dim : {dim_xy.width, dim_xy.height})
-  {
-    assert(dim >= minimum_window_size && window_size_assert_message);
-  }
-
   if (window_ == nullptr) [[unlikely]]
   {
     throw std::runtime_error(std::format("Failed to create SDL_Window! Error: {}", SDL_GetError()));

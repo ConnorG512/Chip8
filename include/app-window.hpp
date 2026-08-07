@@ -5,19 +5,38 @@
 #include <cassert>
 #include <cstdint>
 #include <expected>
+#include <limits>
 #include <memory>
 #include <string>
 #include <utility>
 
 namespace Chip8
 {
+inline constexpr auto minimum_window_size{1};
+
 class AppWindow
 {
 public:
   struct Dimensions
   {
-    std::int32_t width{};
-    std::int32_t height{};
+    std::uint32_t width{};
+    std::uint32_t height{};
+  };
+
+  struct WindowWH
+  {
+    std::uint32_t width{};
+    std::uint32_t height{};
+
+    explicit WindowWH(Dimensions window_dim) noexcept : width{window_dim.width}, height{window_dim.height}
+    {
+      for (auto dim : {this->width, this->height})
+      {
+        assert(dim > minimum_window_size && "Window must exceed minimum window size of 1!");
+        assert(dim <= std::numeric_limits<std::int32_t>::max() &&
+               "Given Window value would not fit inside of an SDL window signed integer");
+      }
+    }
   };
 
   struct WindowTitle
@@ -30,7 +49,7 @@ public:
     }
   };
 
-  AppWindow(WindowTitle title, Dimensions dim_xy);
+  AppWindow(WindowTitle title, WindowWH win_wh);
 
   [[nodiscard]] auto window_ref() -> SDL_Window &;
   [[nodiscard]] auto get_window_dimensions() noexcept
