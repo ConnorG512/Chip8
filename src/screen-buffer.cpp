@@ -1,4 +1,5 @@
 #include "chip8-spec.hpp"
+#include "pixel-row.hpp"
 #include "screen-buffer.hpp"
 
 #include <algorithm>
@@ -22,19 +23,20 @@ using ScrBuf = Chip8::ScrBuf;
   return (wrapped_y * Chip8::Spec::screen_width) + wrapped_x;
 }
 
-auto convert_bits_to_byte_array(std::byte bits) -> std::array<std::byte, Chip8::Spec::max_pixel_row_len>
+auto convert_bits_to_byte_array(std::byte bits) -> Chip8::PixelRow
 {
+  using PixelRow = Chip8::PixelRow;
+
   static constexpr std::byte full_row{0b1'1'1'1'1'1'1'1};
   if (bits == full_row)
   {
-    static constexpr std::byte white_pixel{0xFF};
-    return {white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel};
+    return Chip8::PixelRow::new_filled();
   }
 
   static constexpr std::byte empty_row{0b0'0'0'0'0'0'0'0};
   if (bits == empty_row)
   {
-    return {};
+    return PixelRow{};
   }
 
   std::array<std::byte, Chip8::Spec::max_pixel_row_len> pixel_values{};
@@ -44,7 +46,7 @@ auto convert_bits_to_byte_array(std::byte bits) -> std::array<std::byte, Chip8::
     const auto current_bit{index};
     static constexpr std::byte single_bitmask{0b1};
     static constexpr std::byte zero{0x00};
-    static constexpr auto most_significant_bit {7};
+    static constexpr auto most_significant_bit{7};
     const bool is_on_bit{((bits >> (most_significant_bit - current_bit)) & single_bitmask) != zero};
 
     if (is_on_bit)
@@ -53,7 +55,7 @@ auto convert_bits_to_byte_array(std::byte bits) -> std::array<std::byte, Chip8::
       pixel ^= std::byte{flip_val};
     }
   }
-  return pixel_values;
+  return PixelRow{pixel_values};
 }
 
 auto paint_pixels(std::span<std::uint32_t, Chip8::Spec::max_pixel_row_len> pixel_row,
@@ -88,8 +90,9 @@ auto Chip8::ScrBuf::create_new_screen_buffer(PixelPosition pos_xy, std::span<con
   for (const auto [row_index, pixel] : sprite_data | std::views::enumerate)
   {
     const auto current_position{starting_position + (row_index * Chip8::Spec::screen_width)};
-    const std::array<std::byte, Chip8::Spec::max_pixel_row_len> pixels_to_paint{convert_bits_to_byte_array(pixel)};
-    paint_pixels(std::span{buf_}.subspan(current_position).first<Chip8::Spec::max_pixel_row_len>(), pixels_to_paint);
+    const Chip8::PixelRow pixels_to_paint{convert_bits_to_byte_array(pixel)};
+    paint_pixels(std::span{buf_}.subspan(current_position).first<Chip8::Spec::max_pixel_row_len>(),
+                 pixels_to_paint.value());
   }
 
   return std::as_bytes(std::span(buf_));
