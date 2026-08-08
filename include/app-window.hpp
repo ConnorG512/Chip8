@@ -13,8 +13,6 @@
 
 namespace Chip8
 {
-inline constexpr auto minimum_window_size{1};
-
 class AppWindow
 {
 public:

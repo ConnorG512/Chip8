@@ -9,6 +9,7 @@ inline constexpr std::uint8_t screen_width{64};
 inline constexpr std::uint8_t screen_height{32};
 
 inline constexpr std::uint8_t max_pixel_row_len{8};
+inline constexpr auto minimum_window_size{1};
 
 struct MemoryPortions
 {

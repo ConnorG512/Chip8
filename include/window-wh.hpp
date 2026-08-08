@@ -1,8 +1,11 @@
 #pragma once
 
+#include "chip8-spec.hpp"
+
 #include <cassert>
 #include <cstdint>
 #include <initializer_list>
+#include <utility>
 
 namespace Chip8
 {
@@ -12,6 +15,7 @@ struct Dimensions
   std::uint32_t height{};
 };
 
+
 class WindowWH
 {
 public:
@@ -19,8 +23,7 @@ public:
   {
     for (auto dim : {window_dim.width, window_dim.height})
     {
-      static constexpr auto minimum_window_size{1};
-      assert(dim >= minimum_window_size);
+      assert(std::cmp_greater_equal(dim, Spec::minimum_window_size));
     }
   }
 
@@ -29,8 +32,7 @@ public:
   {
     for (auto dim : {value.width, value.height})
     {
-      static constexpr auto minimum_window_size{1};
-      assert(dim >= minimum_window_size);
+      assert(std::cmp_greater_equal(dim, Spec::minimum_window_size));
     }
     width_ = value.width;
     height_ = value.height;
