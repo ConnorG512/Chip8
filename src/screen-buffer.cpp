@@ -24,14 +24,14 @@ using ScrBuf = Chip8::ScrBuf;
 
 auto convert_bits_to_byte_array(std::byte bits) -> std::array<std::byte, Chip8::Spec::max_pixel_row_len>
 {
-  static constexpr std::byte full_row{0b11111111};
+  static constexpr std::byte full_row{0b1'1'1'1'1'1'1'1};
   if (bits == full_row)
   {
     static constexpr std::byte white_pixel{0xFF};
     return {white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel, white_pixel};
   }
 
-  static constexpr std::byte empty_row{0b00000000};
+  static constexpr std::byte empty_row{0b0'0'0'0'0'0'0'0};
   if (bits == empty_row)
   {
     return {};
@@ -76,7 +76,7 @@ auto paint_pixels(std::span<std::uint32_t, Chip8::Spec::max_pixel_row_len> pixel
 
 void Chip8::ScrBuf::clear_buffer() noexcept
 {
-  static constexpr auto black_pixel{0x00000000};
+  static constexpr auto black_pixel{0xFF};
   std::ranges::fill(buf_, black_pixel);
 }
 

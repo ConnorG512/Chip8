@@ -2,10 +2,8 @@
 #include "decode-types.hpp"
 #include "instruction-packet.hpp"
 
-#include <bit>
 #include <cassert>
 #include <cstdint>
-#include <cstring>
 #include <print>
 
 namespace
