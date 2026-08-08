@@ -18,8 +18,9 @@ void Chip8::execute(DecodeTypes::List decode_list, Device &device, AppRenderer &
 
         if constexpr (std::is_same_v<DecT, DecodeTypes::DrawToScreen>)
         {
-          assert(list.register_id_1 <= 15);
-          assert(list.register_id_2 <= 15);
+          static constexpr auto max_register_count {15};
+          assert(list.register_id_1 <= max_register_count);
+          assert(list.register_id_2 <= max_register_count);
 
           const auto reg_1_value{device.registers_.at(list.register_id_1).get_data()};
           const auto reg_2_value{device.registers_.at(list.register_id_2).get_data()};
