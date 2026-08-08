@@ -7,6 +7,7 @@
 #include "execute-instructions.hpp"
 #include "lua/lua.hpp"
 #include "memory-buffer.hpp"
+#include "window-wh.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
@@ -31,10 +32,10 @@ auto main() -> int
     const auto screen_refresh_rate{lua.get<std::uint32_t>("config.refresh_rate")};
 
     const auto window_scale{lua.get<std::uint32_t>("config.window_scale")};
-    Chip8::AppWindow::Dimensions window_dimensions{.width = Chip8::Spec::screen_width * window_scale,
-                                                   .height = Chip8::Spec::screen_height * window_scale};
 
-    Chip8::AppWindow window{Chip8::AppWindow::WindowTitle{"Chip8"}, Chip8::AppWindow::WindowWH(window_dimensions)};
+    Chip8::AppWindow window (Chip8::AppWindow::WindowTitle{"Chip8"},
+                     Chip8::WindowWH(Chip8::Dimensions{.width = Chip8::Spec::screen_width * window_scale,
+                                                       .height = Chip8::Spec::screen_height * window_scale}));
 
     Chip8::AppRenderer renderer{window.window_ref(), window.get_window_dimensions().value()};
 

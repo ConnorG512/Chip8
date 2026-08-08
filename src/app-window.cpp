@@ -1,4 +1,5 @@
 #include "app-window.hpp"
+#include "window-wh.hpp"
 
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_render.h>
@@ -12,19 +13,18 @@
 namespace
 {
 using AppWindow = Chip8::AppWindow;
-[[nodiscard]] auto create_sdl_window(AppWindow::WindowTitle title, AppWindow::WindowWH win_wh)
+[[nodiscard]] auto create_sdl_window(AppWindow::WindowTitle title, Chip8::WindowWH win_wh)
     -> std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>
 {
-  const auto window_width{static_cast<std::int32_t>(win_wh.width)};
-  const auto window_height{static_cast<std::int32_t>(win_wh.height)};
+  const auto [width, height] = win_wh.value();
 
-  auto *created_window{SDL_CreateWindow(title.name, window_width, window_height, SDL_WINDOW_OPENGL)};
+  auto *created_window{SDL_CreateWindow(title.name, static_cast<std::int32_t>(width), static_cast<std::int32_t>(height),
+                                        SDL_WINDOW_OPENGL)};
   return {created_window, &SDL_DestroyWindow};
 }
 } // namespace
 
-Chip8::AppWindow::AppWindow(WindowTitle title, WindowWH win_wh)
-    : window_{create_sdl_window(title, win_wh)}
+Chip8::AppWindow::AppWindow(WindowTitle title, WindowWH win_wh) : window_{create_sdl_window(title, win_wh)}
 {
   if (window_ == nullptr) [[unlikely]]
   {

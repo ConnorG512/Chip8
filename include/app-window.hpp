@@ -1,11 +1,12 @@
 #pragma once
 
+#include "window-wh.hpp"
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
 #include <cassert>
 #include <cstdint>
 #include <expected>
-#include <limits>
 #include <memory>
 #include <string>
 #include <utility>
@@ -17,28 +18,6 @@ inline constexpr auto minimum_window_size{1};
 class AppWindow
 {
 public:
-  struct Dimensions
-  {
-    std::uint32_t width{};
-    std::uint32_t height{};
-  };
-
-  struct WindowWH
-  {
-    std::uint32_t width{};
-    std::uint32_t height{};
-
-    explicit WindowWH(Dimensions window_dim) noexcept : width{window_dim.width}, height{window_dim.height}
-    {
-      for (auto dim : {this->width, this->height})
-      {
-        assert(dim > minimum_window_size && "Window must exceed minimum window size of 1!");
-        assert(dim <= std::numeric_limits<std::int32_t>::max() &&
-               "Given Window value would not fit inside of an SDL window signed integer");
-      }
-    }
-  };
-
   struct WindowTitle
   {
     const char *name{nullptr};
