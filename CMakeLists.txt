@@ -80,7 +80,7 @@ target_include_directories(chip-8 PRIVATE
 
 target_compile_options(chip-8 PRIVATE 
   $<$<CONFIG:Debug>:-fno-inline>
-  $<$<CXX_COMPILER_ID:GNU>:-freflection>
+  $<$<CXX_COMPILER_ID:GNU>:-freflection;-fcontracts>
 )
 
 add_custom_command(

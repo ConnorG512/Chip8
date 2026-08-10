@@ -3,3 +3,4 @@ WarningsAsErrors: 'bugprone-*'
 
 RemovedArgs: 
   - '-freflection'
+  - '-fcontracts'
