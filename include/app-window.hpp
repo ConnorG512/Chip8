@@ -29,7 +29,7 @@ public:
   AppWindow(WindowTitle title, WindowWH win_wh);
 
   [[nodiscard]] auto window_ref() -> SDL_Window &;
-  [[nodiscard]] auto get_window_dimensions() noexcept
+  [[nodiscard]] auto get_window_dimensions()
       -> std::expected<std::pair<std::uint32_t, std::uint32_t>, std::string>;
 
 private:

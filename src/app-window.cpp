@@ -38,7 +38,7 @@ auto Chip8::AppWindow::window_ref() -> SDL_Window &
   return *window_;
 }
 
-[[nodiscard]] auto Chip8::AppWindow::get_window_dimensions() noexcept
+[[nodiscard]] auto Chip8::AppWindow::get_window_dimensions()
     -> std::expected<std::pair<std::uint32_t, std::uint32_t>, std::string>
 {
   static_assert(sizeof(int) == sizeof(std::uint32_t), "Int should be the same size as std::uint32_t (32bit)");
