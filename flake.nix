@@ -57,11 +57,12 @@
       packages.x86_64-linux = {
         debug = pkgs.callPackage build {
           stdenv = pkgs.gcc16Stdenv;
+          clang-tools = pkgs.llvmPackages_22.clang-tools;
           releaseMode = "debug";
           enableGgdb = true;
         };
-        release = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "release"; };
-        relWithDebInfo = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; releaseMode = "relWithDebInfo"; };
+        release = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; clang-tools = pkgs.llvmPackages_22.clang-tools; releaseMode = "release"; };
+        relWithDebInfo = pkgs.callPackage build { stdenv = pkgs.gcc16Stdenv; clang-tools = pkgs.llvmPackages_22.clang-tools; releaseMode = "relWithDebInfo"; };
       };
 
       devShells.x86_64-linux.default =

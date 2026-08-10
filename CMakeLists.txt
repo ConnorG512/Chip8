@@ -13,7 +13,9 @@ option(ENABLE_GGDB "Enable ggdb." OFF)
 find_program(CLANG_TIDY_EXEC "clang-tidy")
 if(CLANG_TIDY_EXEC)
   message(STATUS "Clang Tidy found... Path: ${CLANG_TIDY_EXEC}")
-  set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXEC};-p=${CMAKE_BINARY_DIR}")
+  set(CMAKE_CXX_CLANG_TIDY 
+    "${CLANG_TIDY_EXEC}"
+  )
 elseif(NOT CLANG_TIDY_EXEC)
   message(STATUS "Clang tidy could not be found! Cannot run analysis.")
 endif()
@@ -78,6 +80,7 @@ target_include_directories(chip-8 PRIVATE
 
 target_compile_options(chip-8 PRIVATE 
   $<$<CONFIG:Debug>:-fno-inline>
+  $<$<CXX_COMPILER_ID:GNU>:-freflection>
 )
 
 add_custom_command(
