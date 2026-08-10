@@ -17,5 +17,5 @@ enum class ScanCode : std::uint8_t
 {
   Escape = SDL_SCANCODE_ESCAPE,
 };
-[[nodiscard]] auto get_keypress() noexcept -> std::optional<ScanCode>;
+[[nodiscard]] auto get_keypress() -> std::optional<ScanCode>;
 } // namespace Chip8::Event

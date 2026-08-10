@@ -47,7 +47,7 @@ auto Chip8::Event::poll() noexcept -> std::optional<List>
   return std::nullopt;
 }
 
-auto Chip8::Event::get_keypress() noexcept -> std::optional<ScanCode>
+auto Chip8::Event::get_keypress() -> std::optional<ScanCode>
 {
   if (const auto result = get_sdl_keyboard(); result.has_value())
   {
