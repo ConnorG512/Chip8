@@ -9,15 +9,19 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 # Options: 
 option(ENABLE_SANITIZE "Enable sanitize tooling." OFF)
 option(ENABLE_GGDB "Enable ggdb." OFF)
+option(ENABLE_CLANG_TIDY "Enable the use of clang-tidy" OFF)
 
-find_program(CLANG_TIDY_EXEC "clang-tidy")
-if(CLANG_TIDY_EXEC)
-  message(STATUS "Clang Tidy found... Path: ${CLANG_TIDY_EXEC}")
-  set(CMAKE_CXX_CLANG_TIDY 
-    "${CLANG_TIDY_EXEC}"
-  )
-elseif(NOT CLANG_TIDY_EXEC)
-  message(STATUS "Clang tidy could not be found! Cannot run analysis.")
+if(ENABLE_CLANG_TIDY)
+  message(STATUS "Clang tidy has been enabled.")
+  find_program(CLANG_TIDY_EXEC "clang-tidy")
+  if(CLANG_TIDY_EXEC)
+    message(STATUS "Clang Tidy found... Path: ${CLANG_TIDY_EXEC}")
+    set(CMAKE_CXX_CLANG_TIDY 
+      "${CLANG_TIDY_EXEC}"
+    )
+  elseif(NOT CLANG_TIDY_EXEC)
+    message(STATUS "Clang tidy could not be found! Cannot run analysis.")
+  endif()
 endif()
 
 # Source Lists: 
@@ -28,6 +32,7 @@ set(SOURCE_CORE
   src/device.cpp
   src/event-handler.cpp
   src/execute-instructions.cpp
+  src/handle_contract_violation.cpp
   src/instruction-packet.cpp
   src/main.cpp
   src/memory-buffer.cpp
