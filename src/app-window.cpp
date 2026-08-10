@@ -34,7 +34,7 @@ Chip8::AppWindow::AppWindow(WindowTitle title, WindowWH win_wh) : window_{create
 
 auto Chip8::AppWindow::window_ref() -> SDL_Window &
 {
-  assert(window_.get() != nullptr);
+  contract_assert(window_);
   return *window_;
 }
 

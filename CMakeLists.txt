@@ -28,6 +28,7 @@ set(SOURCE_CORE
   src/device.cpp
   src/event-handler.cpp
   src/execute-instructions.cpp
+  src/handle_contract_violation.cpp
   src/instruction-packet.cpp
   src/main.cpp
   src/memory-buffer.cpp
