@@ -60,9 +60,9 @@ auto convert_bits_to_byte_array(std::byte bits) -> Chip8::PixelRow
 
 auto paint_pixels(std::span<std::uint32_t, Chip8::Spec::max_pixel_row_len> pixel_row,
                   std::span<const std::byte> pixel_values)
+  pre(!pixel_row.empty())
+  pre(!pixel_values.empty())
 {
-  assert(!pixel_row.empty() && !pixel_values.empty());
-
   for (const auto &&[scr_buf, pixel_val] : std::views::zip(pixel_row, pixel_values))
   {
     static constexpr std::byte white{0xFF};
