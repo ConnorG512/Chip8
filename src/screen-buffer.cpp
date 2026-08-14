@@ -78,7 +78,7 @@ auto paint_pixels(std::span<std::uint32_t, Chip8::Spec::max_pixel_row_len> pixel
 
 void Chip8::ScrBuf::clear_buffer() noexcept
 {
-  static constexpr auto black_pixel{0xFF};
+  static constexpr auto black_pixel{0x00};
   std::ranges::fill(buf_, black_pixel);
 }
 
