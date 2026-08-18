@@ -25,6 +25,12 @@ namespace
 
 Lua::Engine::Engine() : lua_{create_engine()} {}
 
+Lua::Engine::Engine(const std::filesystem::path &path_to_config)
+  : lua_{create_engine()}
+{
+  execute_file(path_to_config.c_str());
+}
+
 void Lua::Engine::execute_file(const std::string &file_name) noexcept
 {
   assert(!file_name.empty() && "Lua file to execute must have a name!");

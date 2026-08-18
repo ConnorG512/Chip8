@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cassert>
 #include <concepts>
+#include <filesystem>
 #include <lua.h>
 #include <lua.hpp>
 #include <luaconf.h>
@@ -44,6 +45,8 @@ template <LuaType T> [[nodiscard]] auto get_val(lua_State *lua) -> T
   }
 }
 } // namespace Lua::Impl
+
+
 
 template <Lua::LuaType T> auto Lua::Engine::get(const std::string &key_strings) -> T
 {

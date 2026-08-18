@@ -2,6 +2,7 @@
 
 #include <concepts>
 #include <cstdint>
+#include <filesystem>
 #include <lua.hpp>
 #include <memory>
 #include <string>
@@ -30,6 +31,8 @@ class Engine
 {
 public:
   Engine();
+  explicit Engine(const std::filesystem::path &path_to_config)
+    pre(std::filesystem::exists(path_to_config));
 
   template <LuaType T> [[nodiscard]] auto get(const std::string &key_strings) -> T;
   void execute_file(const std::string &file_name) noexcept;

@@ -1,24 +1,12 @@
-#include "app-renderer.hpp"
-#include "app-window.hpp"
-#include "chip8-spec.hpp"
-#include "decode-instruction.hpp"
-#include "device.hpp"
-#include "event-handler.hpp"
-#include "execute-instructions.hpp"
-#include "lua/lua.hpp"
-#include "memory-buffer.hpp"
-#include "window-wh.hpp"
+#include "application.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_timer.h>
-#include <cstdint>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
-#include <stdexcept>
-#include <utility>
 
 auto main() -> int
 {
@@ -26,79 +14,12 @@ auto main() -> int
 
   try
   {
-    Lua::Engine lua{};
-    lua.execute_file("config.lua");
+    Chip8::Application app{};
 
-    const auto screen_refresh_rate{lua.get<std::uint32_t>("config.refresh_rate")};
-
-    const auto window_scale{lua.get<std::uint32_t>("config.window_scale")};
-
-    Chip8::AppWindow window (Chip8::AppWindow::WindowTitle{"Chip8"},
-                     Chip8::WindowWH(Chip8::Dimensions{.width = Chip8::Spec::screen_width * window_scale,
-                                                       .height = Chip8::Spec::screen_height * window_scale}));
-
-    Chip8::AppRenderer renderer{window.window_ref(), window.get_window_dimensions().value()};
-
-    Chip8::Device device{Chip8::Spec::application_reserve.start};
-
-    const auto result = device.mem_buf_.load_app_into_buffer(lua.get<std::string>("config.app_name"));
-    if (!result.has_value())
+    const auto app_res {app.run()};
+    if(app_res.value() == Chip8::Application::ExitCode::Quit)
     {
-      std::cerr << "Failed to load file!\n";
-      return EXIT_FAILURE;
-    }
-
-    renderer.clear_renderer();
-
-    bool done{false};
-    while (!done)
-    {
-      if (const auto poll = Chip8::Event::poll(); poll.has_value())
-      {
-        using EventList = Chip8::Event::List;
-
-        switch (poll.value())
-        {
-          case EventList::Quit:
-            {
-              done = true;
-              break;
-            }
-          case EventList::Key_Down:
-            {
-              if (const auto pressed_key = Chip8::Event::get_keypress(); pressed_key.has_value())
-              {
-                using ScanCode = Chip8::Event::ScanCode;
-                switch (pressed_key.value())
-                {
-                  case ScanCode::Escape:
-                    {
-                      done = true;
-                    }
-                }
-              }
-
-              break;
-            }
-          default:
-            {
-              throw std::runtime_error("Invalid Event!");
-            }
-        }
-      }
-      // Application Loop start:
-
-      auto fetched_instruction{Chip8::decode_instruction(
-          {device.mem_buf_.fetch_instruction(device.program_counter_.get_current_increment())})};
-
-      device.program_counter_.increment_program();
-
-      Chip8::execute(fetched_instruction, device, renderer);
-
-      renderer.present();
-      // Application Loop end:
-
-      SDL_Delay(screen_refresh_rate);
+      return EXIT_SUCCESS;
     }
   }
   catch (std::exception &e)
@@ -108,9 +29,7 @@ auto main() -> int
   }
   catch (...)
   {
-    std::cerr << "Unknown Exception Caught!" << '\n';
+    std::cerr << "Unknown Exception!\n";
     return EXIT_FAILURE;
   }
-
-  return EXIT_SUCCESS;
 }
