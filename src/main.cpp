@@ -1,10 +1,6 @@
 #include "application.hpp"
 
-#include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_timer.h>
-#include <cstdlib>
 #include <exception>
 #include <iostream>
 
@@ -17,7 +13,9 @@ auto main() -> int
     Chip8::Application app{};
 
     const auto app_res {app.run()};
-    if(app_res.value() == Chip8::Application::ExitCode::Quit)
+
+    using ExitCode = Chip8::Application::ExitCode;
+    if(app_res.value() == ExitCode::Quit)
     {
       return EXIT_SUCCESS;
     }
