@@ -1,15 +1,14 @@
 #include "lua/lua.hpp"
 
 #include <cassert>
-#include <format>
 #include <lauxlib.h>
 #include <lualib.h>
 #include <memory>
-#include <stdexcept>
 
 namespace
 {
 [[nodiscard]] auto create_engine() -> std::unique_ptr<lua_State, decltype(&lua_close)>
+  post(result : result != nullptr)
 {
   auto *state{luaL_newstate()};
   if (state == nullptr) [[unlikely]]
