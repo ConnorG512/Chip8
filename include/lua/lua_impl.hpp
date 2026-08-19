@@ -4,8 +4,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <concepts>
-#include <filesystem>
 #include <lua.h>
 #include <lua.hpp>
 #include <luaconf.h>
@@ -13,7 +11,6 @@
 #include <ranges>
 #include <stdexcept>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 namespace Lua::Impl
@@ -21,6 +18,7 @@ namespace Lua::Impl
 inline constexpr auto top_of_stack{-1};
 
 template <LuaType T> [[nodiscard]] auto get_val(lua_State *lua) -> T
+  pre(lua != nullptr)
 {
   assert(lua != nullptr && "Lua must not be nullptr!");
 
@@ -50,8 +48,6 @@ template <LuaType T> [[nodiscard]] auto get_val(lua_State *lua) -> T
 
 template <Lua::LuaType T> auto Lua::Engine::get(const std::string &key_strings) -> T
 {
-  assert(!key_strings.empty() && "\"key_strings\" cannot be empty!");
-
   auto string_path = key_strings | std::views::split('.') | std::ranges::to<std::vector<std::string>>();
 
   static constexpr auto global_variable_index{0};
