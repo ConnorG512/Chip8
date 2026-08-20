@@ -25,7 +25,7 @@ class Scancode
     {
     }
 
-    enum class RemapErr
+    enum class RemapErr : std::uint8_t
     {
       InvalidScancode,
     };
