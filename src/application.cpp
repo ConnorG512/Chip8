@@ -1,7 +1,9 @@
 #include "application.hpp"
-#include "event-handler.hpp"
+#include "event/handler.hpp"
 #include "decode-instruction.hpp"
+#include "event/type.hpp"
 #include "execute-instructions.hpp"
+#include <SDL3/SDL_events.h>
 
 namespace Chip8
 {
@@ -20,39 +22,19 @@ auto Application::run() -> std::optional<ExitCode>
   bool done{false};
   while (!done)
   {
-    if (const auto poll = Chip8::Event::poll(); poll.has_value())
+    SDL_Event event {};
+    while(SDL_PollEvent(&event))
     {
-      using EventList = Chip8::Event::List;
-
-      switch (poll.value())
+      const auto current_event = get_event_type(EventType(static_cast<SDL_EventType>(event.type)));
+      if(current_event.has_value())
       {
-        case EventList::Quit:
-          {
-            done = true;
-            break;
-          }
-        case EventList::Key_Down:
-          {
-            if (const auto pressed_key = Chip8::Event::get_keypress(); pressed_key.has_value())
-            {
-              using ScanCode = Chip8::Event::ScanCode;
-              switch (pressed_key.value())
-              {
-                case ScanCode::Escape:
-                  {
-                    done = true;
-                  }
-              }
-            }
-
-            break;
-          }
-        default:
-          {
-            throw std::runtime_error("Invalid Event!");
-          }
+        if(current_event.value() == SDL_EVENT_KEY_DOWN)
+        {
+          done = true;
+        }
       }
     }
+
     // Application Loop start:
     auto fetched_instruction{Chip8::decode_instruction(
         {memory_.mem_buf.fetch_instruction(pc_.get_current_increment())})};

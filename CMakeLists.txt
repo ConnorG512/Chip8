@@ -30,7 +30,7 @@ set(SOURCE_CORE
   src/app-window.cpp
   src/application.cpp
   src/decode-instruction.cpp
-  src/event-handler.cpp
+  src/event/handler.cpp
   src/execute-instructions.cpp
   src/handle_contract_violation.cpp
   src/instruction-packet.cpp
