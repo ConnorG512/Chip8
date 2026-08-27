@@ -2,6 +2,8 @@
 
 #include "chip8-spec.hpp"
 #include "texture.hpp"
+#include "window/lengths.hpp"
+
 #include <SDL3/SDL_render.h>
 #include <memory>
 
@@ -10,7 +12,7 @@ namespace Chip8
 class AppRenderer
 {
 public:
-  AppRenderer(SDL_Window &current_window, std::pair<std::uint32_t, std::uint32_t> window_dimensions);
+  AppRenderer(SDL_Window &current_window, WindowLengths lengths);
 
   void clear_renderer() noexcept;
   void present() noexcept;

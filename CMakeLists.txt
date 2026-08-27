@@ -27,7 +27,6 @@ endif()
 # Source Lists: 
 set(SOURCE_CORE
   src/app-renderer.cpp
-  src/app-window.cpp
   src/application.cpp
   src/decode-instruction.cpp
   src/event/handler.cpp
@@ -40,6 +39,7 @@ set(SOURCE_CORE
   src/screen-buffer.cpp
   src/texture.cpp
   src/timer.cpp
+  src/window.cpp
 )
 
 set(SOURCE_LUA

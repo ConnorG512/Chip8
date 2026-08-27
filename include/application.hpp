@@ -1,14 +1,13 @@
 #pragma once
 
 #include "app-renderer.hpp"
-#include "app-window.hpp"
 #include "chip8-spec.hpp"
 #include "cpu.hpp"
 #include "event/key_list.hpp"
 #include "lua/lua.hpp"
 #include "memory.hpp"
 #include "program-counter.hpp"
-#include "window-wh.hpp"
+#include "window/window.hpp"
 
 #include <SDL3/SDL_scancode.h>
 #include <cstdint>
@@ -46,10 +45,17 @@ private:
       .key_e = Scancode(static_cast<SDL_Scancode>(lua_.get<std::uint16_t>("config.keybinds.key_e"))),
       .key_f = Scancode(static_cast<SDL_Scancode>(lua_.get<std::uint16_t>("config.keybinds.key_f"))),
   };
-  AppWindow window_{Chip8::AppWindow::WindowTitle("Chip8"),
-                    Chip8::WindowWH(Dimensions<std::uint32_t>{
-                        .width = Spec::screen_width * lua_.get<std::uint32_t>("config.window_scale"),
-                        .height = Spec::screen_height * lua_.get<std::uint32_t>("config.window_scale")})};
+  // AppWindow window_{Title("Chip8"),
+  //                   WindowSize(Dimensions<std::uint32_t>{
+  //                       .width = Spec::screen_width * lua_.get<std::uint32_t>("config.window_scale"),
+  //                       .height = Spec::screen_height * lua_.get<std::uint32_t>("config.window_scale")})};
+
+  Window window_{Title("Chip8"),
+                 WindowLengths{.width = Length(static_cast<std::uint32_t>(
+                                   Spec::screen_width * lua_.get<std::uint32_t>("config.window_scale"))),
+                               .height = Length(static_cast<std::uint32_t>(
+                                   Spec::screen_height * lua_.get<std::uint32_t>("config.window_scale")))}};
+
   AppRenderer renderer_{window_.window_ref(), window_.get_window_dimensions().value()};
   Memory memory_{};
   Cpu cpu_{};

@@ -6,15 +6,15 @@
 #include <format>
 #include <stdexcept>
 
-Chip8::AppRenderer::AppRenderer(SDL_Window &current_window, std::pair<std::uint32_t, std::uint32_t> window_dimensions)
+Chip8::AppRenderer::AppRenderer(SDL_Window &current_window, WindowLengths lengths)
     : renderer_{SDL_CreateRenderer(&current_window, nullptr), &SDL_DestroyRenderer}
 {
   if (renderer_ == nullptr) [[unlikely]]
   {
     throw std::runtime_error(std::format("Failed to create SDL_Renderer! Error: {}", SDL_GetError()));
   }
-  SDL_SetRenderLogicalPresentation(renderer_.get(), static_cast<int>(window_dimensions.first),
-                                   static_cast<int>(window_dimensions.second), SDL_LOGICAL_PRESENTATION_LETTERBOX);
+  SDL_SetRenderLogicalPresentation(renderer_.get(), lengths.width.value(),
+                                   lengths.height.value(), SDL_LOGICAL_PRESENTATION_LETTERBOX);
 }
 
 void Chip8::AppRenderer::clear_renderer() noexcept { SDL_RenderClear(renderer_.get()); }
