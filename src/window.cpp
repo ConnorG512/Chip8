@@ -18,8 +18,8 @@ using WindowLengths = Chip8::WindowLengths;
 [[nodiscard]] auto create_sdl_window(Title title, WindowLengths lengths)
     -> std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>
 {
-  const auto window_width{static_cast<std::int32_t>(lengths.width.value())};
-  const auto window_height{static_cast<std::int32_t>(lengths.height.value())};
+  const auto window_width{lengths.width.value()};
+  const auto window_height{lengths.height.value()};
 
   auto *created_window{SDL_CreateWindow(title.value(), window_width, window_height, SDL_WINDOW_OPENGL)};
   return {created_window, &SDL_DestroyWindow};
@@ -50,7 +50,7 @@ auto Window::window_ref() -> SDL_Window & { return *window_; }
     return std::unexpected(std::format("Failed SDL_GetWindowSize! Error: {}", SDL_GetError()));
   }
 
-  return WindowLengths{.width = Length(static_cast<std::uint32_t>(window_x)),
-                       .height = Length(static_cast<std::uint32_t>(window_y))};
+  return WindowLengths{.width = Length(window_x),
+                       .height = Length(window_y)};
 }
 } // namespace Chip8

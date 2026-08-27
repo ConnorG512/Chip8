@@ -3,6 +3,7 @@
 #include <concepts>
 #include <cstdint>
 #include <limits>
+#include <type_traits>
 
 namespace Chip8
 {
@@ -43,4 +44,8 @@ public:
 private:
   T length_{0};
 };
+
+// CTAD
+template <std::signed_integral S>
+Length(S) -> Length<std::make_unsigned<S>>;
 } // namespace Chip8
