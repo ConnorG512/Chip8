@@ -8,26 +8,26 @@
 
 namespace Chip8
 {
-namespace Impl
-{
-
-} // namespace Impl
-
 class PixelRow
 {
 public:
+  // - Alias
   using PixelBuffer = std::array<std::byte, Chip8::Spec::max_pixel_row_len>;
 
+  // - Constructors
   PixelRow() = default;
 
   template <typename T>
     requires std::same_as<T, PixelBuffer>
   explicit constexpr PixelRow(T buffer);
 
+  // - Member functions
   [[nodiscard]] constexpr auto value() const -> PixelBuffer;
-  [[nodiscard]] constexpr auto operator=(PixelBuffer value) -> PixelRow &;
-
+  
   [[nodiscard]] static constexpr auto new_filled() noexcept -> PixelRow;
+  
+  // - Operator overloads
+  [[nodiscard]] constexpr auto operator=(PixelBuffer value) -> PixelRow &;
 
 private:
   PixelBuffer buf_{};

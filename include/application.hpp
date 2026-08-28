@@ -18,10 +18,13 @@ namespace Chip8
 class Application
 {
 public:
+  // - Types
   enum class ExitCode : std::uint8_t
   {
     Quit,
   };
+
+  // - Member functions
   [[nodiscard]] auto run() -> std::optional<ExitCode>;
 
 private:
@@ -45,10 +48,6 @@ private:
       .key_e = Scancode(static_cast<SDL_Scancode>(lua_.get<std::uint16_t>("config.keybinds.key_e"))),
       .key_f = Scancode(static_cast<SDL_Scancode>(lua_.get<std::uint16_t>("config.keybinds.key_f"))),
   };
-  // AppWindow window_{Title("Chip8"),
-  //                   WindowSize(Dimensions<std::uint32_t>{
-  //                       .width = Spec::screen_width * lua_.get<std::uint32_t>("config.window_scale"),
-  //                       .height = Spec::screen_height * lua_.get<std::uint32_t>("config.window_scale")})};
 
   Window window_{Title("Chip8"),
                  WindowLengths{.width = Length(static_cast<std::uint32_t>(

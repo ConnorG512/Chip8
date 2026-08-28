@@ -30,11 +30,14 @@ enum class SupportedTypes : std::uint8_t
 class Engine
 {
 public:
+  // - Constructors
   Engine();
   explicit Engine(const std::filesystem::path &path_to_config)
     pre(std::filesystem::exists(path_to_config));
-
+  
+  // - Member functions
   template <LuaType T> [[nodiscard]] auto get(const std::string &key_strings) -> T;
+  
   void execute_file(const std::string &file_name) noexcept;
 
 private:

@@ -12,8 +12,10 @@ namespace Chip8
 class Texture
 {
 public:
+  // - Constructor
   Texture(SDL_Renderer &renderer, SDL_TextureAccess texture_access, std::pair<int, int> dimensions_wh);
-
+  
+  // - Memeber functions
   auto update_texture(std::span<const std::byte> buffer) -> SDL_Texture&;
 
 private:

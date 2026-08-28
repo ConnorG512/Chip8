@@ -12,9 +12,12 @@ namespace Chip8
 class AppRenderer
 {
 public:
+  // - Constructors
   AppRenderer(SDL_Window &current_window, WindowLengths lengths);
-
+  
+  // - Member functions
   void clear_renderer() noexcept;
+  
   void present() noexcept;
 
   void prepare_fullscreen_texture(std::span<const std::byte> buffer);

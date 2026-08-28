@@ -13,7 +13,7 @@ inline constexpr auto max_vertex_range{1.0F};
 class Vertex
 {
 public:
-  // -- Types
+  // - Types
   enum class VertexCoord : std::uint8_t
   {
     X,
@@ -21,14 +21,14 @@ public:
     Z,
   };
 
-  // -- Constructors
+  // - Constructors
   explicit constexpr Vertex(VertexProperties<float> vertex)
       pre(vertex.vx >= minimum_vertex_range && vertex.vx <= maximum_vertex_range)
       pre(vertex.vy >= minimum_vertex_range && vertex.vy <= maximum_vertex_range)
       pre(vertex.vz >= minimum_vertex_range && vertex.vz <= maximum_vertex_range)
       : vx{vertex.vx}, vy{vertex.vy}, vz{vertex.vz} {};
 
-  //-- Member Functions:
+  // - Member functions:
   [[nodiscard]] constexpr auto value(VertexCoord coord) const -> float
   {
     switch (coord)

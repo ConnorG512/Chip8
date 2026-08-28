@@ -5,9 +5,11 @@ namespace Chip8
 class Title
 {
 public:
+  // - Constructors
   Title() = default;
   constexpr Title(const char *title) pre(title != nullptr) : title_{title} {};
-
+  
+  // - Member functions
   [[nodiscard]] constexpr auto value() const -> const char*
   {
     return title_;

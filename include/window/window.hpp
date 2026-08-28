@@ -16,8 +16,10 @@ namespace Chip8
 class Window
 {
 public:
+  // - Constructors
   Window(Title title, WindowLengths lengths);
 
+  // - Member functions
   [[nodiscard]] auto window_ref() -> SDL_Window &pre(window_);
 
   [[nodiscard]] auto get_window_dimensions() -> std::expected<WindowLengths, std::string>;
