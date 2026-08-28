@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vertex-properties.hpp"
+#include "utility"
 
 #include <cstdint>
 #include <stdexcept>
@@ -23,9 +24,9 @@ public:
 
   // - Constructors
   explicit constexpr Vertex(VertexProperties<float> vertex)
-      pre(vertex.vx >= minimum_vertex_range && vertex.vx <= maximum_vertex_range)
-      pre(vertex.vy >= minimum_vertex_range && vertex.vy <= maximum_vertex_range)
-      pre(vertex.vz >= minimum_vertex_range && vertex.vz <= maximum_vertex_range)
+      pre(within_bounds({.lower = minimum_vertex_range, .upper = maximum_vertex_range}, vertex.vx))
+      pre(within_bounds({.lower = minimum_vertex_range, .upper = maximum_vertex_range}, vertex.vy))
+      pre(within_bounds({.lower = minimum_vertex_range, .upper = maximum_vertex_range}, vertex.vz))
       : vx{vertex.vx}, vy{vertex.vy}, vz{vertex.vz} {};
 
   // - Member functions:
