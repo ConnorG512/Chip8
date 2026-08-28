@@ -43,6 +43,7 @@
           buildInputs = [
             (callPackage ./nix/sdl3-build.nix { inherit releaseMode; })
             (callPackage ./nix/lua-build.nix { inherit releaseMode; })
+            (callPackage ./nix/glad-build.nix { inherit releaseMode; })
           ];
           cmakeFlags = [
             "-DCMAKE_BUILD_TYPE=${cmakeBuildProfiles.${releaseMode}.flag}"

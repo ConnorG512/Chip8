@@ -54,13 +54,13 @@ add_executable(chip-8
 find_package(SDL3 REQUIRED)
 find_package(PkgConfig REQUIRED)
 
-pkg_check_modules(LUA REQUIRED IMPORTED_TARGET
-  lua
-)
+pkg_check_modules(LUA REQUIRED IMPORTED_TARGET lua)
+pkg_check_modules(GLAD REQUIRED IMPORTED_TARGET glad)
 
 target_link_libraries(chip-8 PRIVATE
   SDL3::SDL3
   PkgConfig::LUA
+  PkgConfig::GLAD
 )
 
 # Add Warning flags:
