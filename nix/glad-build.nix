@@ -41,9 +41,6 @@ in
     prefix=$out
     libdir=$out/lib
     includedir=$out/include
-    INSTALL_BIN=$out/bin
-    INSTALL_INC=$out/include
-    INSTALL_LIB=$out/lib
 
     Name: Glad
     Description: OpenGL Wrapper
