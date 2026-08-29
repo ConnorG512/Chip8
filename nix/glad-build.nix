@@ -36,8 +36,6 @@ in
     mkdir -p $out/include $out/lib $out/lib/pkgconfig
     cp -r include/* $out/include/
     cp libglad.a $out/lib/
-    runHook postInstall
-
 
     cat >"$out/lib/pkgconfig/glad.pc" <<EOF
     prefix=$out
@@ -54,5 +52,7 @@ in
     Libs: -L$out/lib -lglad
     Cflags: -I$out/include
     EOF
+
+    runHook postInstall
   '';
 })
