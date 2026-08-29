@@ -27,7 +27,7 @@ public:
       pre(within_bounds({.lower = minimum_vertex_range, .upper = maximum_vertex_range}, vertex.vx))
       pre(within_bounds({.lower = minimum_vertex_range, .upper = maximum_vertex_range}, vertex.vy))
       pre(within_bounds({.lower = minimum_vertex_range, .upper = maximum_vertex_range}, vertex.vz))
-      : vx{vertex.vx}, vy{vertex.vy}, vz{vertex.vz} {};
+      : vx_{vertex.vx}, vy_{vertex.vy}, vz_{vertex.vz} {};
 
   // - Member functions:
   [[nodiscard]] constexpr auto value(VertexCoord coord) const -> float
